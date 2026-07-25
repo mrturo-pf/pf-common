@@ -7,11 +7,6 @@ on:
         description: 'Repository name (pf-rates, pf-payroll)'
         required: true
         type: string
-      checkout_db:
-        description: 'Whether to checkout pf-db for integration tests'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   debug:
@@ -31,9 +26,8 @@ jobs:
           repository: mrturo-pf/pf-common
           path: pf-common
 
-      # Checkout pf-db (conditional, only if needed)
+      # Checkout pf-db (always - provides SQL schema for integration tests)
       - name: Checkout pf-db
-        if: ${{ inputs.checkout_db }}
         uses: actions/checkout@v4
         with:
           repository: mrturo-pf/pf-db
@@ -69,13 +63,11 @@ jobs:
           echo "PF-COMMON CONTENT"
           echo "========================================="
           ls -la pf-common/
-          if [ "${{ inputs.checkout_db }}" == "true" ]; then
-            echo ""
-            echo "========================================="
-    echo "PF-DB CONTENT"
-            echo "========================================="
-            ls -la _pf-db/ | head -20
-          fi
+          echo ""
+          echo "========================================="
+          echo "PF-DB CONTENT"
+          echo "========================================="
+          ls -la _pf-db/ | head -20
 
       # Install system dependencies
       - name: Install system dependencies
@@ -131,7 +123,7 @@ jobs:
       - name: Step 1 - Lint (fix mode)
         working-directory: ${{ inputs.repo_name }}
         env:
-          PF_DB_PATH: ${{ inputs.checkout_db && github.workspace || '' }}/_pf-db
+          PF_DB_PATH: ${{ github.workspace }}/_pf-db
         run: |
           echo "========================================="
           echo "STEP 1: LINT (FIX MODE)"
@@ -219,15 +211,13 @@ jobs:
       - name: Step 7 - Tests
         working-directory: ${{ inputs.repo_name }}
         env:
-          PF_DB_PATH: ${{ inputs.checkout_db && github.workspace || '' }}/_pf-db
+          PF_DB_PATH: ${{ github.workspace }}/_pf-db
         run: |
           echo "========================================="
           echo "STEP 7: TESTS"
           echo "========================================="
-          if [ "${{ inputs.checkout_db }}" == "true" ]; then
-            echo "PF_DB_PATH is set to: $PF_DB_PATH"
-            echo ""
-          fi
+          echo "PF_DB_PATH is set to: $PF_DB_PATH"
+          echo ""
           make test-cov 2>&1 | tee /tmp/test-output.txt
           EXIT_CODE=${PIPESTATUS[0]}
           echo ""
@@ -269,5 +259,4 @@ jobs:
           echo "DEBUG WORKFLOW COMPLETED"
           echo "========================================="
           echo "Repository: ${{ inputs.repo_name }}"
-          echo "Checkout DB: ${{ inputs.checkout_db }}"
           echo "Check individual steps above for details"
