@@ -319,6 +319,73 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
+      # Pre-flight check: verify Secret Manager secrets exist before deploying
+      - name: Verify Secret Manager secrets exist
+        run: |
+          set -e
+          
+          echo "Checking required secrets in Secret Manager..."
+          
+          REPO_UPPER=$(echo "${{ inputs.repo_name }}" | tr '[:lower:]-' '[:upper:]_')
+          API_KEY_SECRET="PF_${REPO_UPPER}_API_KEY"
+          
+          MISSING_SECRETS=()
+          
+          # Check PF_DATABASE_URL
+          if ! gcloud secrets describe PF_DATABASE_URL --quiet > /dev/null 2>&1; then
+            MISSING_SECRETS+=("PF_DATABASE_URL")
+          fi
+          
+          # Check service-specific API key
+          if ! gcloud secrets describe "${API_KEY_SECRET}" --quiet > /dev/null 2>&1; then
+            MISSING_SECRETS+=("${API_KEY_SECRET}")
+          fi
+          
+          # For pf-payroll, also check PF_RATES_API_KEY
+          if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
+            if ! gcloud secrets describe PF_RATES_API_KEY --quiet > /dev/null 2>&1; then
+              MISSING_SECRETS+=("PF_RATES_API_KEY")
+            fi
+          fi
+          
+          if [ ${#MISSING_SECRETS[@]} -gt 0 ]; then
+            echo ""
+            echo "=========================================="
+            echo "ERROR: Missing Secret Manager secrets"
+            echo "=========================================="
+            echo ""
+            echo "The following secrets do not exist in Secret Manager:"
+            for SECRET in "${MISSING_SECRETS[@]}"; do
+              echo "  - ${SECRET}"
+            done
+            echo ""
+            echo "Create them using:"
+            echo ""
+            for SECRET in "${MISSING_SECRETS[@]}"; do
+              if [ "${SECRET}" = "PF_DATABASE_URL" ]; then
+                echo "  echo -n 'postgresql+asyncpg://USER:PASS@/pf_db?host=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:us-central1:pf-db' | \\"
+                echo "    gcloud secrets create PF_DATABASE_URL --data-file=- --replication-policy=automatic"
+              else
+                echo "  echo -n \"\$(openssl rand -hex 32)\" | \\"
+                echo "    gcloud secrets create ${SECRET} --data-file=- --replication-policy=automatic"
+              fi
+              echo ""
+            done
+            echo "Then grant Service Account access:"
+            echo ""
+            echo "  SA=\"${{ inputs.repo_name }}@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com\""
+            for SECRET in "${MISSING_SECRETS[@]}"; do
+              echo "  gcloud secrets add-iam-policy-binding ${SECRET} \\"
+              echo "    --member=\"serviceAccount:\${SA}\" \\"
+              echo "    --role=\"roles/secretmanager.secretAccessor\""
+            done
+            echo ""
+            echo "=========================================="
+            exit 1
+          fi
+          
+          echo "All required secrets exist."
+
       # Cost-control guard: block the pipeline if Artifact Registry vulnerability
       # scanning is enabled on the repository — it adds ~$5/month per image.
       - name: Verify Artifact Registry scanning is disabled
