@@ -69,9 +69,7 @@ env:
   SERVICE_NAME: ${{ inputs.repo_name }}
   RUNTIME_SA: ${{ inputs.repo_name }}@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
 
-permissions:
-  contents: read
-  security-events: write  # required for SARIF upload to GitHub Security
+# NOTE: permissions must be declared by the CALLER workflow, not here
 
 jobs:
   # ----------------------------------------------------------------------------
