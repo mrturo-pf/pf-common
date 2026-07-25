@@ -259,11 +259,14 @@ jobs:
 
   # ----------------------------------------------------------------------------
   # gate: manual approval before deploying (only on push to main)
+  # Two separate gate jobs with mutually exclusive conditions:
+  # - gate-with-approval: requires manual approval (environment: production)
+  # - gate-without-approval: runs immediately (no environment)
   # Configure required reviewers for the "production" environment in:
   #   GitHub → Settings → Environments → production → Required reviewers
   # ----------------------------------------------------------------------------
-  gate:
-    name: Approval Gate
+  gate-with-approval:
+    name: Approval Gate (Manual)
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.require_approval
@@ -273,6 +276,16 @@ jobs:
       - name: Deployment approved
         run: echo "Manual approval granted — proceeding to deploy."
 
+  gate-without-approval:
+    name: Approval Gate (Bypassed)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !inputs.require_approval
+
+    steps:
+      - name: Approval bypassed
+        run: echo "Manual approval disabled — proceeding directly to deploy."
+
   # ----------------------------------------------------------------------------
   # deploy: push image to AR, deploy to Cloud Run (only on push to main)
   # Migrations are handled by pf-db before this service receives traffic.
@@ -280,11 +293,13 @@ jobs:
   deploy:
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
-    needs: gate
+    needs: [gate-with-approval, gate-without-approval]
+    # Run if EITHER gate completed successfully (one will be skipped, one will run)
     if: |
       github.event_name == 'push' && 
       github.ref == 'refs/heads/main' && 
-      (needs.gate.result == 'success' || needs.gate.result == 'skipped')
+      !cancelled() &&
+      (needs.gate-with-approval.result == 'success' || needs.gate-without-approval.result == 'success')
     environment: GCP
 
     steps:
@@ -400,7 +415,7 @@ jobs:
   notify-failure:
     name: Notify — Failure
     runs-on: ubuntu-latest
-    needs: [test, build, deploy]
+    needs: [test, build, gate-with-approval, gate-without-approval, deploy]
     if: |
       always() &&
       github.event_name == 'push' &&
