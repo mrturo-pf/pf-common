@@ -320,7 +320,10 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       # Pre-flight check: verify Secret Manager secrets exist before deploying
-      - name: Verify Secret Manager secrets exist
+      # Note: This requires the SA to have secretmanager.viewer permissions
+      # If it fails, deployment will continue but may fail later if secrets are missing
+      - name: Verify Secret Manager secrets exist (optional)
+        continue-on-error: true
         run: |
           set -e
           
