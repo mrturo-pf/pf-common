@@ -98,16 +98,21 @@ jobs:
           path: pf-common
           token: ${{ secrets.GH_PAT || github.token }}
 
-      - name: Set up Python 3.14
-        uses: actions/setup-python@v6
+      # Checkout pf-common again for composite actions
+      - name: Checkout pf-common for composite actions
+        uses: actions/checkout@v7
         with:
-          python-version: "3.14"
-          cache: pip
-          cache-dependency-path: ${{ inputs.repo_name }}/pyproject.toml
+          repository: mrturo-pf/pf-common
+          path: .pf-common
+          token: ${{ secrets.GH_PAT || github.token }}
 
-      - name: Install dependencies
-        working-directory: ${{ inputs.repo_name }}
-        run: pip install -e ".[dev]"
+      - name: Setup Python with dependencies
+        uses: ./.pf-common/.github/actions/setup-python-deps
+        with:
+          python-version: '3.14'
+          cache-dependency-path: ${{ inputs.repo_name }}/pyproject.toml
+          working-directory: ${{ inputs.repo_name }}
+          install-extras: '[dev]'
 
       # pf-db is checked out as a sibling (_pf-db/) so conftest.py can read the
       # SQL test fixtures (schema + seed) without duplicating them in this repo.
@@ -146,15 +151,7 @@ jobs:
         run: make test-cov
 
       - name: Install Trivy
-        run: |
-          sudo apt-get install -y wget gnupg
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key \
-            | gpg --dearmor \
-            | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" \
-            | sudo tee /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update -qq
-          sudo apt-get install -y trivy
+        uses: ./.pf-common/.github/actions/install-trivy
 
       - name: Security scan (trivy fs)
         working-directory: ${{ inputs.repo_name }}
@@ -176,6 +173,13 @@ jobs:
         with:
           path: ${{ inputs.repo_name }}
 
+      - name: Checkout pf-common for composite actions
+        uses: actions/checkout@v7
+        with:
+          repository: mrturo-pf/pf-common
+          path: .pf-common
+          token: ${{ secrets.GH_PAT || github.token }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -195,16 +199,10 @@ jobs:
         run: docker save ${{ inputs.repo_name }}:scan -o /tmp/${{ inputs.repo_name }}-scan.tar
 
       - name: Install Trivy
-        run: |
-          sudo apt-get install -y wget gnupg
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key \
-            | gpg --dearmor \
-            | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" \
-            | sudo tee /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update -qq
-          sudo apt-get install -y trivy
-          trivy --version
+        uses: ./.pf-common/.github/actions/install-trivy
+
+      - name: Verify Trivy installation
+        run: trivy --version
 
       # Pass 1: SARIF for GitHub Security tab (exit-code 0 — always creates file)
       - name: Trivy scan — SARIF

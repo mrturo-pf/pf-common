@@ -1,0 +1,39 @@
+# Composite Action: Setup Python with Dependencies
+# ==================================================
+# Standardizes Python setup + caching + dependency installation
+
+name: 'Setup Python with Dependencies'
+description: 'Setup Python with pip cache and install project dependencies'
+
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.14'
+  cache-dependency-path:
+    description: 'Path to pyproject.toml for cache key'
+    required: false
+    default: 'pyproject.toml'
+  working-directory:
+    description: 'Working directory for pip install'
+    required: false
+    default: '.'
+  install-extras:
+    description: 'Extras to install (e.g., "[dev]")'
+    required: false
+    default: '[dev]'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+        cache-dependency-path: ${{ inputs.cache-dependency-path }}
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: pip install -e ".${{ inputs.install-extras }}"
