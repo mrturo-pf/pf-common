@@ -351,6 +351,7 @@ jobs:
           fi
 
           # Build gcloud command with optional Cloud SQL instance
+          echo "Building deployment command..."
           GCLOUD_CMD="gcloud run deploy ${{ env.SERVICE_NAME }}"
           GCLOUD_CMD="$GCLOUD_CMD --image=${IMAGE}"
           GCLOUD_CMD="$GCLOUD_CMD --region=${{ env.REGION }}"
@@ -367,12 +368,17 @@ jobs:
           GCLOUD_CMD="$GCLOUD_CMD --quiet"
           
           # Add Cloud SQL instance if provided
-          if [ -n "${{ secrets.GCP_CLOUD_SQL_INSTANCE || '' }}" ]; then
-            GCLOUD_CMD="$GCLOUD_CMD --add-cloudsql-instances=${{ secrets.GCP_CLOUD_SQL_INSTANCE }}"
+          CLOUDSQL_INSTANCE="${{ secrets.GCP_CLOUD_SQL_INSTANCE || '' }}"
+          if [ -n "${CLOUDSQL_INSTANCE}" ]; then
+            echo "Adding Cloud SQL instance: ${CLOUDSQL_INSTANCE}"
+            GCLOUD_CMD="$GCLOUD_CMD --add-cloudsql-instances=${CLOUDSQL_INSTANCE}"
+          else
+            echo "No Cloud SQL instance configured (optional)"
           fi
           
           # Execute deployment
-          eval "$GCLOUD_CMD"
+          echo "Executing: ${GCLOUD_CMD}"
+          eval "${GCLOUD_CMD}"
 
       - name: Print deployed service URL
         run: |
