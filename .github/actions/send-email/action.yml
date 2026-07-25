@@ -1,0 +1,47 @@
+# Composite Action: Send Email Notification
+# ===========================================
+# Reusable email notification action used by all deploy workflows
+
+name: 'Send Email Notification'
+description: 'Send email notification via SMTP'
+
+inputs:
+  mail_server:
+    description: 'SMTP server address'
+    required: true
+  mail_port:
+    description: 'SMTP port'
+    required: true
+  mail_username:
+    description: 'SMTP username'
+    required: true
+  mail_password:
+    description: 'SMTP password'
+    required: true
+  mail_from:
+    description: 'Sender email address'
+    required: true
+  mail_to:
+    description: 'Recipient email address(es)'
+    required: true
+  subject:
+    description: 'Email subject line'
+    required: true
+  body:
+    description: 'Email body content'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Send email
+      uses: dawidd6/action-send-mail@v18
+      with:
+        server_address: ${{ inputs.mail_server }}
+        server_port: ${{ inputs.mail_port }}
+        username: ${{ inputs.mail_username }}
+        password: ${{ inputs.mail_password }}
+        subject: ${{ inputs.subject }}
+        to: ${{ inputs.mail_to }}
+        from: ${{ inputs.mail_from }}
+        body: ${{ inputs.body }}
