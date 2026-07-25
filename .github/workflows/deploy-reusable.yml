@@ -335,15 +335,9 @@ jobs:
       # e.g., pf-rates → PF_RATES_API_KEY, pf-payroll → PF_PAYROLL_API_KEY
       - name: Deploy to Cloud Run
         run: |
-          set -euo pipefail
+          set -eo pipefail
           IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
           
-          # Cloud SQL instance (optional)
-          CLOUDSQL_FLAG=""
-          if [ -n "${{ secrets.GCP_CLOUD_SQL_INSTANCE }}" ]; then
-            CLOUDSQL_FLAG="--add-cloudsql-instances=${{ secrets.GCP_CLOUD_SQL_INSTANCE }}"
-          fi
-
           # Secret Manager secrets
           # Always include PF_DATABASE_URL
           # API key follows naming convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
@@ -356,21 +350,29 @@ jobs:
             SECRETS_ARG="${SECRETS_ARG},PF_RATES_API_KEY=PF_RATES_API_KEY:latest"
           fi
 
-          gcloud run deploy "${{ env.SERVICE_NAME }}" \
-            --image="${IMAGE}" \
-            --region="${{ env.REGION }}" \
-            --platform=managed \
-            --allow-unauthenticated \
-            --service-account="${{ env.RUNTIME_SA }}" \
-            --min-instances=0 \
-            --max-instances=2 \
-            --memory=512Mi \
-            --cpu=1 \
-            --port=8080 \
-            --set-secrets="${SECRETS_ARG}" \
-            --set-env-vars="FINANCIAL_DATA_HTTP_PROXY=" \
-            --quiet \
-            ${CLOUDSQL_FLAG}
+          # Build gcloud command with optional Cloud SQL instance
+          GCLOUD_CMD="gcloud run deploy ${{ env.SERVICE_NAME }}"
+          GCLOUD_CMD="$GCLOUD_CMD --image=${IMAGE}"
+          GCLOUD_CMD="$GCLOUD_CMD --region=${{ env.REGION }}"
+          GCLOUD_CMD="$GCLOUD_CMD --platform=managed"
+          GCLOUD_CMD="$GCLOUD_CMD --allow-unauthenticated"
+          GCLOUD_CMD="$GCLOUD_CMD --service-account=${{ env.RUNTIME_SA }}"
+          GCLOUD_CMD="$GCLOUD_CMD --min-instances=0"
+          GCLOUD_CMD="$GCLOUD_CMD --max-instances=2"
+          GCLOUD_CMD="$GCLOUD_CMD --memory=512Mi"
+          GCLOUD_CMD="$GCLOUD_CMD --cpu=1"
+          GCLOUD_CMD="$GCLOUD_CMD --port=8080"
+          GCLOUD_CMD="$GCLOUD_CMD --set-secrets=${SECRETS_ARG}"
+          GCLOUD_CMD="$GCLOUD_CMD --set-env-vars=FINANCIAL_DATA_HTTP_PROXY="
+          GCLOUD_CMD="$GCLOUD_CMD --quiet"
+          
+          # Add Cloud SQL instance if provided
+          if [ -n "${{ secrets.GCP_CLOUD_SQL_INSTANCE || '' }}" ]; then
+            GCLOUD_CMD="$GCLOUD_CMD --add-cloudsql-instances=${{ secrets.GCP_CLOUD_SQL_INSTANCE }}"
+          fi
+          
+          # Execute deployment
+          eval "$GCLOUD_CMD"
 
       - name: Print deployed service URL
         run: |
