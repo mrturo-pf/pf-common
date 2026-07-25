@@ -489,7 +489,7 @@ jobs:
   notify-failure:
     name: Notify — Failure
     runs-on: ubuntu-latest
-    needs: [test, build, gate-with-approval, gate-without-approval, deploy]
+    needs: [test, build, deploy]
     if: |
       always() &&
       github.event_name == 'push' &&
@@ -504,17 +504,23 @@ jobs:
           server_port: ${{ secrets.MAIL_PORT }}
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: " [${{ inputs.repo_name }}] Pipeline failed — ${{ github.ref_name }}"
+          subject: "[FAILED] ${{ inputs.repo_name }} pipeline — ${{ github.ref_name }}"
           to: ${{ secrets.MAIL_TO }}
           from: ${{ secrets.MAIL_FROM }}
           body: |
-            One or more jobs failed in the ${{ inputs.repo_name }} CI/CD pipeline.
+            Deployment pipeline FAILED for ${{ inputs.repo_name }}.
 
-            Branch:  ${{ github.ref_name }}
-            Commit:  ${{ github.sha }}
-            Author:  ${{ github.actor }}
+            Failed Jobs:
+            - Test & Lint: ${{ needs.test.result }}
+            - Build & Scan: ${{ needs.build.result }}
+            - Deploy to Cloud Run: ${{ needs.deploy.result }}
 
-            Run details:
+            Details:
+            - Branch: ${{ github.ref_name }}
+            - Commit: ${{ github.sha }}
+            - Author: ${{ github.actor }}
+
+            View run:
             ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   # ----------------------------------------------------------------------------
@@ -524,7 +530,11 @@ jobs:
     name: Notify — Success
     runs-on: ubuntu-latest
     needs: [deploy]
-    if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.deploy.result == 'success'
 
     steps:
       - name: Send success email
@@ -534,15 +544,22 @@ jobs:
           server_port: ${{ secrets.MAIL_PORT }}
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: " [${{ inputs.repo_name }}] Deployed successfully — ${{ github.sha }}"
+          subject: "[SUCCESS] ${{ inputs.repo_name }} deployed — ${{ github.ref_name }}"
           to: ${{ secrets.MAIL_TO }}
           from: ${{ secrets.MAIL_FROM }}
           body: |
-            ${{ inputs.repo_name }} deployed successfully to Cloud Run.
+            SUCCESS: ${{ inputs.repo_name }} deployed to Cloud Run.
 
-            Branch:  ${{ github.ref_name }}
-            Commit:  ${{ github.sha }}
-            Author:  ${{ github.actor }}
+            Service Details:
+            - Name: ${{ inputs.repo_name }}
+            - Region: us-central1
+            - Image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ inputs.repo_name }}/${{ inputs.repo_name }}:${{ github.sha }}
 
-            Run details:
+            Deployment Info:
+            - Branch: ${{ github.ref_name }}
+            - Commit: ${{ github.sha }}
+            - Author: ${{ github.actor }}
+            - Approval: ${{ inputs.require_approval && 'Manual' || 'Automatic' }}
+
+            View details:
             ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
