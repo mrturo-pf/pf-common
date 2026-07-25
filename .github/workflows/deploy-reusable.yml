@@ -329,8 +329,10 @@ jobs:
           
           echo "Checking required secrets in Secret Manager..."
           
-          REPO_UPPER=$(echo "${{ inputs.repo_name }}" | tr '[:lower:]-' '[:upper:]_')
-          API_KEY_SECRET="PF_${REPO_UPPER}_API_KEY"
+          # Extract service name without 'pf-' prefix (pf-rates -> RATES)
+          SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
+          SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
+          API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           
           MISSING_SECRETS=()
           
@@ -434,8 +436,10 @@ jobs:
           # Secret Manager secrets
           # Always include PF_DATABASE_URL
           # API key follows naming convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
-          REPO_UPPER=$(echo "${{ inputs.repo_name }}" | tr '[:lower:]-' '[:upper:]_')
-          API_KEY_SECRET="PF_${REPO_UPPER}_API_KEY"
+          # Extract the service name without 'pf-' prefix (pf-rates -> RATES, pf-payroll -> PAYROLL)
+          SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
+          SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
+          API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           SECRETS_ARG="PF_DATABASE_URL=PF_DATABASE_URL:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
           # Optional: PF_RATES_API_KEY for pf-payroll (calling pf-rates)
