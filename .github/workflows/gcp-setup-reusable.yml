@@ -16,20 +16,15 @@
 #
 # ==============================================================================
 
-name: GCP Setup (Manual)
+name: GCP Setup (Reusable)
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       service_name:
         description: 'Service to setup (pf-rates, pf-payroll, pf-db)'
         required: true
-        type: choice
-        options:
-          - pf-rates
-          - pf-payroll
-          - pf-db
-          - all
+        type: string
       create_secrets:
         description: 'Create Secret Manager secrets (placeholder values)'
         required: true
@@ -40,6 +35,11 @@ on:
         required: true
         type: boolean
         default: true
+    secrets:
+      GCP_SA_KEY:
+        required: true
+      GCP_PROJECT_ID:
+        required: true
 
 env:
   REGION: us-central1
@@ -48,7 +48,6 @@ jobs:
   setup:
     name: GCP Setup - ${{ inputs.service_name }}
     runs-on: ubuntu-latest
-    environment: GCP
 
     steps:
       - name: Checkout repository
