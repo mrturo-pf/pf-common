@@ -1,0 +1,51 @@
+# Composite Action: Trivy Container Scan with SARIF
+# ===================================================
+# Performs Trivy security scan on container tar, uploads SARIF to GitHub Security,
+# and runs pipeline gate to block on critical/high vulnerabilities with fixes
+
+name: 'Trivy Container Scan with SARIF'
+description: 'Scan container image with Trivy, upload SARIF to GitHub Security, and gate on fixable vulnerabilities'
+
+inputs:
+  image_tar:
+    description: 'Path to container image tar file'
+    required: true
+  sarif_file:
+    description: 'Output path for SARIF results'
+    required: false
+    default: 'trivy-results.sarif'
+  severity:
+    description: 'Severity levels to scan for'
+    required: false
+    default: 'CRITICAL,HIGH'
+
+runs:
+  using: composite
+  steps:
+    # Pass 1: SARIF for GitHub Security tab (exit-code 0 — always creates file)
+    - name: Trivy scan — SARIF
+      shell: bash
+      run: |
+        trivy image \
+          --input ${{ inputs.image_tar }} \
+          --format sarif \
+          --output ${{ inputs.sarif_file }} \
+          --severity ${{ inputs.severity }} \
+          --exit-code 0
+
+    - name: Upload Trivy SARIF to GitHub Security
+      uses: github/codeql-action/upload-sarif@v4
+      if: always()
+      with:
+        sarif_file: ${{ inputs.sarif_file }}
+
+    # Pass 2: pipeline gate — blocks on CRITICAL/HIGH with available fixes
+    - name: Trivy scan — pipeline gate
+      shell: bash
+      run: |
+        trivy image \
+          --input ${{ inputs.image_tar }} \
+          --format table \
+          --severity ${{ inputs.severity }} \
+          --ignore-unfixed \
+          --exit-code 1

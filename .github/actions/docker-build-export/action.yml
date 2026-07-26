@@ -1,0 +1,37 @@
+# Composite Action: Docker Build and Export
+# ==========================================
+# Standardizes Docker image build with caching and export to tar
+
+name: 'Docker Build and Export'
+description: 'Build Docker image with Buildx, GitHub Actions cache, and export to tar'
+
+inputs:
+  context:
+    description: 'Build context directory'
+    required: true
+  image_name:
+    description: 'Image name/tag for local build'
+    required: true
+  tar_output:
+    description: 'Output path for tar file'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v7
+      with:
+        context: ${{ inputs.context }}
+        push: false
+        load: true
+        tags: ${{ inputs.image_name }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Export image to tar
+      shell: bash
+      run: docker save ${{ inputs.image_name }} -o ${{ inputs.tar_output }}
