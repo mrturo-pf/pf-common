@@ -18,7 +18,6 @@ pf-common provides reusable Make targets, validation scripts, and templates for 
 
 ```
 pf-common/
-├── GIT_SETUP.md                   # Instructions to initialize as git repo
 ├── README.md                      # This file
 ├── make/
 │   ├── common.mk                  # Shared Make targets for FastAPI services
