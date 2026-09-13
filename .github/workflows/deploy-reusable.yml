@@ -472,7 +472,18 @@ jobs:
     name: Smoke Test (Health Check)
     runs-on: ubuntu-latest
     needs: deploy
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # 'deploy' needs BOTH gate-with-approval and gate-without-approval, and
+    # exactly one of those is ALWAYS skipped by design (mutually-exclusive
+    # approval/bypass pattern). Without always() + an explicit needs.deploy
+    # check, GitHub's implicit success() walks that whole ancestor chain,
+    # sees the skipped gate, and skips this job too — even though 'deploy'
+    # itself genuinely succeeded. Same reasoning as notify-success/failure
+    # below.
+    if: |
+      always() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.deploy.result == 'success'
 
     steps:
       - name: Verify /health reports ok, the right service, and a fresh uptime
