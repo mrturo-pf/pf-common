@@ -3,13 +3,15 @@
 # ==============================================================================
 #
 # This reusable workflow provides CI/CD for PF microservices deploying to GCP
-# Cloud Run. It eliminates duplication by centralizing the 6-job pipeline:
+# Cloud Run. It eliminates duplication by centralizing the 7-job pipeline:
 #   1. test      - Lint, typecheck, coverage, security scan
 #   2. build     - Docker build, Trivy scan, artifact packaging
 #   3. gate      - Manual approval (production environment)
 #   4. deploy    - Push to Artifact Registry, deploy to Cloud Run
-#   5. notify-failure  - Email on pipeline failure
-#   6. notify-success  - Email on successful deployment
+#   5. smoke-test - Curl the deployed /health endpoint; verify it's the
+#                    right service and a genuinely fresh revision
+#   6. notify-failure  - Email on pipeline failure
+#   7. notify-success  - Email on successful, verified deployment
 #
 # USAGE FROM REPOS:
 #
@@ -266,6 +268,8 @@ jobs:
       !cancelled() &&
       (needs.gate-with-approval.result == 'success' || needs.gate-without-approval.result == 'success')
     environment: GCP
+    outputs:
+      service_url: ${{ steps.deployed-url.outputs.url }}
 
     steps:
       - name: Checkout pf-common for composite actions
@@ -445,10 +449,87 @@ jobs:
           eval "${GCLOUD_CMD}"
 
       - name: Print deployed service URL
+        id: deployed-url
         run: |
-          gcloud run services describe "${{ env.SERVICE_NAME }}" \
+          URL=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
             --region="${{ env.REGION }}" \
-            --format="value(status.url)"
+            --format="value(status.url)")
+          echo "${URL}"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+
+  # ----------------------------------------------------------------------------
+  # smoke-test: verify the freshly deployed revision is actually serving
+  # correct traffic — 'gcloud run deploy' only waits for the container to
+  # become ready (listening on the port), not for the application itself to
+  # be correct. This hits the real public /health endpoint and validates:
+  #   - status is "ok"
+  #   - service name matches this repo (catches a deploy-to-wrong-service mixup)
+  #   - uptime_seconds is small, proving we're talking to the container that
+  #     was JUST started for this deploy, not a stale/wrong revision still
+  #     serving traffic somewhere
+  # ----------------------------------------------------------------------------
+  smoke-test:
+    name: Smoke Test (Health Check)
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Verify /health reports ok, the right service, and a fresh uptime
+        run: |
+          set -euo pipefail
+
+          URL="${{ needs.deploy.outputs.service_url }}/health"
+          # Cloud Run routes 100% of traffic to the new revision the moment
+          # 'gcloud run deploy' returns, and with min-instances=0 the very
+          # first request cold-starts a brand-new container — so a genuinely
+          # fresh deploy reports uptime in the single digits, not minutes.
+          # A high value here is a smoking gun that we're hitting a stale
+          # revision instead of the one we just shipped.
+          MAX_UPTIME_SECONDS=120
+
+          echo "Checking ${URL} (max ${MAX_UPTIME_SECONDS}s uptime expected)..."
+
+          for attempt in $(seq 1 10); do
+            if RESPONSE=$(curl -sf --max-time 15 "${URL}"); then
+              echo "Response: ${RESPONSE}"
+              RESPONSE="${RESPONSE}" \
+              EXPECTED_SERVICE="${{ inputs.repo_name }}" \
+              MAX_UPTIME_SECONDS="${MAX_UPTIME_SECONDS}" \
+              python3 -c "
+          import json, os, sys
+
+          body = json.loads(os.environ['RESPONSE'])
+          service = body.get('service')
+          uptime = body.get('uptime_seconds')
+          expected_service = os.environ['EXPECTED_SERVICE']
+          max_uptime = float(os.environ['MAX_UPTIME_SECONDS'])
+
+          if body.get('status') != 'ok':
+              sys.exit(f'status is not ok: {body}')
+          if service != expected_service:
+              sys.exit(
+                  f'service mismatch: expected {expected_service!r}, got {service!r} '
+                  '— deployed to the wrong Cloud Run service?'
+              )
+          if not isinstance(uptime, int | float):
+              sys.exit(f'uptime_seconds missing or not numeric: {body}')
+          if uptime > max_uptime:
+              sys.exit(
+                  f'uptime_seconds={uptime} exceeds {max_uptime}s — this looks like a '
+                  'STALE revision, not the one just deployed'
+              )
+
+          print(f'Health check OK — service={service}, uptime_seconds={uptime}')
+          "
+              exit 0
+            fi
+            echo "Attempt ${attempt}/10 failed, retrying in 3s..."
+            sleep 3
+          done
+
+          echo "Health check failed after 10 attempts against ${URL}"
+          exit 1
 
   # ----------------------------------------------------------------------------
   # notify-failure: email alert when any job fails on push to main
@@ -456,12 +537,12 @@ jobs:
   notify-failure:
     name: Notify — Failure
     runs-on: ubuntu-latest
-    needs: [test, build, deploy]
+    needs: [test, build, deploy, smoke-test]
     if: |
       always() &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      (needs.test.result == 'failure' || needs.build.result == 'failure' || needs.deploy.result == 'failure')
+      (needs.test.result == 'failure' || needs.build.result == 'failure' || needs.deploy.result == 'failure' || needs.smoke-test.result == 'failure')
 
     steps:
       - name: Checkout pf-common for composite actions
@@ -487,6 +568,7 @@ jobs:
             - Test & Lint: ${{ needs.test.result }}
             - Build & Scan: ${{ needs.build.result }}
             - Deploy to Cloud Run: ${{ needs.deploy.result }}
+            - Smoke Test (Health Check): ${{ needs.smoke-test.result }}
 
             Details:
             - Branch: ${{ github.ref_name }}
@@ -502,12 +584,13 @@ jobs:
   notify-success:
     name: Notify — Success
     runs-on: ubuntu-latest
-    needs: [deploy]
+    needs: [deploy, smoke-test]
     if: |
       always() &&
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      needs.deploy.result == 'success'
+      needs.deploy.result == 'success' &&
+      needs.smoke-test.result == 'success'
 
     steps:
       - name: Checkout pf-common for composite actions
