@@ -324,6 +324,21 @@ jobs:
             fi
           fi
           
+          # For pf-rates, also check the Google Drive CSV export secrets.
+          # These power one optional endpoint (POST /exchange-rates/export)
+          # that the service itself already 503s gracefully without --
+          # still worth a loud pre-flight failure if expected-to-exist
+          # secrets vanish, rather than a less legible failure later inside
+          # `gcloud run deploy --set-secrets`.
+          if [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+            if ! gcloud secrets describe PF_RATES_GDRIVE_OAUTH_TOKEN_JSON --quiet > /dev/null 2>&1; then
+              MISSING_SECRETS+=("PF_RATES_GDRIVE_OAUTH_TOKEN_JSON")
+            fi
+            if ! gcloud secrets describe PF_RATES_GDRIVE_EXPORT_FOLDER_ID --quiet > /dev/null 2>&1; then
+              MISSING_SECRETS+=("PF_RATES_GDRIVE_EXPORT_FOLDER_ID")
+            fi
+          fi
+          
           if [ ${#MISSING_SECRETS[@]} -gt 0 ]; then
             echo ""
             echo "=========================================="
@@ -341,6 +356,12 @@ jobs:
               if [ "${SECRET}" = "PF_DATABASE_URL" ]; then
                 echo "  echo -n 'postgresql+asyncpg://USER:PASS@/pf_db?host=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:us-central1:pf-db' | \\"
                 echo "    gcloud secrets create PF_DATABASE_URL --data-file=- --replication-policy=automatic"
+              elif [ "${SECRET}" = "PF_RATES_GDRIVE_OAUTH_TOKEN_JSON" ]; then
+                echo "  # Run scripts/gdrive_oauth_setup.py once (see docs/google-drive-credentials-setup.md), then:"
+                echo "  gcloud secrets create PF_RATES_GDRIVE_OAUTH_TOKEN_JSON --data-file=path/to/gdrive-oauth-token.json --replication-policy=automatic"
+              elif [ "${SECRET}" = "PF_RATES_GDRIVE_EXPORT_FOLDER_ID" ]; then
+                echo "  echo -n '<google-drive-folder-id>' | \\"
+                echo "    gcloud secrets create PF_RATES_GDRIVE_EXPORT_FOLDER_ID --data-file=- --replication-policy=automatic"
               else
                 echo "  echo -n \"\$(openssl rand -hex 32)\" | \\"
                 echo "    gcloud secrets create ${SECRET} --data-file=- --replication-policy=automatic"
@@ -416,6 +437,14 @@ jobs:
           # Optional: PF_RATES_API_KEY for pf-payroll (calling pf-rates)
           if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
             SECRETS_ARG="${SECRETS_ARG},PF_RATES_API_KEY=PF_RATES_API_KEY:latest"
+          fi
+
+          # Optional: Google Drive CSV export credentials for pf-rates only
+          # (powers POST /exchange-rates/export; the service 503s gracefully
+          # without it, but the pre-flight check above already fails loud if
+          # these secrets were expected -- see docs/deployment.md)
+          if [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+            SECRETS_ARG="${SECRETS_ARG},PF_RATES_GDRIVE_OAUTH_TOKEN_JSON=PF_RATES_GDRIVE_OAUTH_TOKEN_JSON:latest,PF_RATES_GDRIVE_EXPORT_FOLDER_ID=PF_RATES_GDRIVE_EXPORT_FOLDER_ID:latest"
           fi
 
           # Build gcloud command with optional Cloud SQL instance
