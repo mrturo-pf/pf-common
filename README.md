@@ -135,6 +135,11 @@ python common/scripts/sync_deps.py
 3. **Overrideable** - Services can customize any target
 4. **Well-documented** - Clear usage guides and examples
 5. **Versioned** - Changes tracked via git history
+6. **Cloud cost is always the priority** - the shared `deploy-reusable.yml` pipeline
+   (consumed by pf-rates and pf-payroll) must default every infra knob to the cheapest
+   viable option: scale-to-zero (`--min-instances=0`), free scanning (Trivy) over paid
+   Artifact Registry scanning, on-demand jobs over always-on services. Any change here
+   affects cost for every consuming service at once - evaluate the cost delta first.
 
 ## Maintenance Guidelines
 
