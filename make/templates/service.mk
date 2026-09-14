@@ -38,19 +38,19 @@ include ../pf-common/make/common.mk
 
 .PHONY: env-write
 env-write: ## Write .env file with service-specific defaults
-	@printf 'PF_DATABASE_URL=postgresql+asyncpg://pf_db:pf_db@localhost:5432/pf_db\\n' > $(ENV_FILE)
-	@printf '[SERVICE_NAME]_API_KEY=change-me-before-use\\n' >> $(ENV_FILE)
+	@printf 'PF_DATABASE_URL=postgresql+asyncpg://pf_db:pf_db@localhost:5432/pf_db\n' > $(ENV_FILE)
+	@printf '[SERVICE_NAME]_API_KEY=change-me-before-use\n' >> $(ENV_FILE)
 	# Add service-specific environment variables here
-	@printf '\\n# Tooling — corporate pip/npm registries (used by make install/check on VPN)\\n' >> $(ENV_FILE)
-	@printf 'CORPORATIVE_PIP_INDEX=https://pypi.ci.artifacts.corporative.com/artifactory/api/pypi/pythonhosted-pypi-release-remote/simple\\n' >> $(ENV_FILE)
-	@printf 'CORPORATIVE_NPM_REGISTRY=https://npm.ci.artifacts.corporative.com/artifactory/api/npm/external-npm\\n' >> $(ENV_FILE)
-	@printf 'CORPORATIVE_PROXY=http://sysproxy.corpo-rative.com:8080\\n' >> $(ENV_FILE)
+	@printf '\n# Tooling — corporate pip/npm registries (used by make install/check on VPN)\n' >> $(ENV_FILE)
+	@printf 'CORPORATIVE_PIP_INDEX=https://pypi.ci.artifacts.corporative.com/artifactory/api/pypi/pythonhosted-pypi-release-remote/simple\n' >> $(ENV_FILE)
+	@printf 'CORPORATIVE_NPM_REGISTRY=https://npm.ci.artifacts.corporative.com/artifactory/api/npm/external-npm\n' >> $(ENV_FILE)
+	@printf 'CORPORATIVE_PROXY=http://sysproxy.corpo-rative.com:8080\n' >> $(ENV_FILE)
 	@echo "  $(ENV_FILE) written"
 
 .PHONY: local-up
 local-up: ## Start full local stack (env, deps, API)
-	APP_PORT="$(APP_PORT)" \\
-		VENV="$(VENV)" ENV_FILE="$(ENV_FILE)" \\
+	APP_PORT="$(APP_PORT)" \
+		VENV="$(VENV)" ENV_FILE="$(ENV_FILE)" \
 		./scripts/local_stack.sh
 
 # ============================================================================
