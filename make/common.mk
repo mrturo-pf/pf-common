@@ -183,9 +183,11 @@ duplicate-code-src: ## Detect duplicated code in src only
 
 .PHONY: _duplicate-code
 _duplicate-code:
-	@if curl -sfL --connect-timeout 2 -o /dev/null "$(CORPORATIVE_NPM_REGISTRY)/" 2>/dev/null; then \
-		echo "  -> Corporative VPN detected — using Artifactory npm registry"; \
+	@if curl -sfL --connect-timeout 3 -o /dev/null "$(CORPORATIVE_PIP_INDEX)/" 2>/dev/null; then \
+		echo "  -> Corporative VPN detected — routing npm through sysproxy + Artifactory registry"; \
 		export npm_config_registry="$(CORPORATIVE_NPM_REGISTRY)"; \
+		export HTTP_PROXY="$(CORPORATIVE_PROXY)"; \
+		export HTTPS_PROXY="$(CORPORATIVE_PROXY)"; \
 	fi; \
 	npx --yes jscpd --mode strict --min-lines 10 --min-tokens 70 --threshold $(DUPLICATE_THRESHOLD) --reporters console --ignore "**/.venv/**,**/build/**,**/dist/**,**/.github/**" $(DUPLICATE_PATH)
 
