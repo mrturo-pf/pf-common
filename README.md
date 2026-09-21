@@ -25,7 +25,10 @@ pf-common/
 │   └── templates/
 │       └── service.mk             # Template Makefile for new services
 ├── scripts/                       # Shared utility scripts
-│   └── sync_deps.py               # Validate dependency sync across services
+│   ├── sync_deps.py               # Validate dependency sync across services
+│   ├── detect_container_cli.sh    # Detect docker/nerdctl CLI to check container status
+│   ├── local_stack_common.sh      # Shared helpers for each service's scripts/local_stack.sh
+│   └── write_env_common.sh        # Shared helpers for each service's scripts/write_env.sh
 └── (future additions as needed)
 ```
 
@@ -48,10 +51,21 @@ See [make/README.md](make/README.md) for detailed usage.
 Shared utility scripts used across multiple repositories:
 
 - **sync_deps.py** - Validates that core dependencies are synchronized
+- **detect_container_cli.sh** - Detects which CLI (`docker`, `nerdctl`, or the
+  nerdctl embedded in Rancher Desktop) can see whether a container is running;
+  exposes `container_is_running`, sourced by `local_stack_common.sh`
+- **local_stack_common.sh** - Shared helpers (`pf_log`, `pf_require_db_container`,
+  `pf_ensure_venv`, `pf_print_startup_banner`) for each service's own
+  `scripts/local_stack.sh` (the script behind `make local-up`)
+- **write_env_common.sh** - Shared helper (`pf_corporate_tooling_env_block`) for
+  each service's own `scripts/write_env.sh`
 
 **Usage:**
 ```bash
 python common/scripts/sync_deps.py
+
+# Sourced, not run directly, from a service's own scripts/local_stack.sh:
+source ../pf-common/scripts/local_stack_common.sh
 ```
 
 ### Future Additions
