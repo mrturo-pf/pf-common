@@ -106,6 +106,25 @@ import-data:
     PYTHONPATH=src "$(VENV)/bin/python" -m my_service.cli import "$(DATA_FILE)"
 ```
 
+## Overriding generated .env values (API keys, corporate URLs, etc.)
+
+Every per-service `env-write` target (and the shared `pf_corporate_tooling_env_block`
+helper it calls into) accepts overrides as **`make` command-line arguments**, e.g.:
+
+```bash
+make PF_PAYROLL_API_KEY="$(openssl rand -hex 32)" \
+     CORPORATIVE_PIP_INDEX="https://..." \
+     env-write
+```
+
+This must be `make VAR=value target` — **not** `VAR=value make target` (a shell-exported
+env var). Reason: `common.mk` does `-include .env` *before* applying any `?=` default, so
+if a `.env` already exists, the value it already has for that variable wins over a plain
+shell env var (Makefile assignments beat inherited environment variables). Only a
+command-line `make VAR=value` argument has higher precedence than that. If no override is
+given at all, each variable falls back to whatever static default the target/helper ships
+with.
+
 ## Corporate VPN Support
 
 common.mk automatically detects corporate VPN and configures:
@@ -113,13 +132,21 @@ common.mk automatically detects corporate VPN and configures:
 - **pip proxy:** Routes pip through corporate proxy if reachable
 - **npm registry:** Routes npx through Artifactory for jscpd
 
-Set these in your `.env`:
+A freshly generated `.env` ships with a **generic placeholder** for these three
+(defined in `../scripts/write_env_common.sh`, not a real endpoint on purpose):
 
 ```bash
 CORPORATIVE_PIP_INDEX=https://pypi.ci.artifacts.corporative.com/artifactory/api/pypi/pythonhosted-pypi-release-remote/simple
 CORPORATIVE_NPM_REGISTRY=https://npm.ci.artifacts.corporative.com/artifactory/api/npm/external-npm
 CORPORATIVE_PROXY=http://sysproxy.corpo-rative.com:8080
 ```
+
+> **Heads up:** these placeholder values intentionally don't resolve. If you never
+> override them (see previous section), the VPN probe (`curl` against
+> `CORPORATIVE_PIP_INDEX`) just fails and `make install`/`make check`/`duplicate-code-*`
+> silently fall back to the non-VPN path — no error, no proxy, no Artifactory routing for
+> jscpd. That's expected, not a bug. If you need the real VPN behavior, pass your
+> organization's actual endpoints as `make` arguments when running `env-write`.
 
 ## Rancher Desktop Support
 
