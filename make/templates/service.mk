@@ -10,7 +10,9 @@
 #   2. Replace [SERVICE_DESCRIPTION] with brief description
 #   3. Set APP_PORT to a free port (8000, 8001, 8002, ...)
 #   4. Set APP_MODULE to your FastAPI app module path
-#   5. Customize env-write target with service-specific variables
+#   5. Create scripts/write_env.sh (copy the pattern from pf-payroll or
+#      pf-rates: source ../../pf-common/scripts/write_env_common.sh, print
+#      the service-specific lines, then call pf_corporate_tooling_env_block)
 #   6. Add custom targets if needed
 #
 # ============================================================================
@@ -36,15 +38,19 @@ include ../pf-common/make/common.mk
 # Service-specific targets
 # ============================================================================
 
+# scripts/write_env.sh should source ../pf-common/scripts/write_env_common.sh
+# and call pf_corporate_tooling_env_block at the end -- see pf-payroll/pf-rates
+# for the reference implementation. Its CORPORATIVE_* defaults already point
+# at the real Walmart Artifactory/proxy endpoints, so you only need to pass
+# through service-specific vars (PF_DATABASE_URL, [SERVICE_NAME]_API_KEY, ...).
 .PHONY: env-write
-env-write: ## Write .env file with service-specific defaults
-	@printf 'PF_DATABASE_URL=postgresql+asyncpg://pf_db:pf_db@localhost:5432/pf_db\n' > $(ENV_FILE)
-	@printf '[SERVICE_NAME]_API_KEY=change-me-before-use\n' >> $(ENV_FILE)
-	# Add service-specific environment variables here
-	@printf '\n# Tooling — corporate pip/npm registries (used by make install/check on VPN)\n' >> $(ENV_FILE)
-	@printf 'CORPORATIVE_PIP_INDEX=https://pypi.ci.artifacts.corporative.com/artifactory/api/pypi/pythonhosted-pypi-release-remote/simple\n' >> $(ENV_FILE)
-	@printf 'CORPORATIVE_NPM_REGISTRY=https://npm.ci.artifacts.corporative.com/artifactory/api/npm/external-npm\n' >> $(ENV_FILE)
-	@printf 'CORPORATIVE_PROXY=http://sysproxy.corpo-rative.com:8080\n' >> $(ENV_FILE)
+env-write: ## Write .env file with service-specific defaults (delegates to scripts/write_env.sh)
+	@PF_DATABASE_URL="$(PF_DATABASE_URL)" \
+		CORPORATIVE_PIP_INDEX="$(CORPORATIVE_PIP_INDEX)" \
+		CORPORATIVE_NPM_REGISTRY="$(CORPORATIVE_NPM_REGISTRY)" \
+		CORPORATIVE_PROXY="$(CORPORATIVE_PROXY)" \
+		ENV_FILE="$(ENV_FILE)" \
+		./scripts/write_env.sh >/dev/null
 	@echo "  $(ENV_FILE) written"
 
 .PHONY: local-up
