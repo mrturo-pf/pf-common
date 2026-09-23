@@ -40,8 +40,8 @@ include ../pf-common/make/common.mk
 
 # scripts/write_env.sh should source ../pf-common/scripts/write_env_common.sh
 # and call pf_corporate_tooling_env_block at the end -- see pf-payroll/pf-rates
-# for the reference implementation. Its CORPORATIVE_* defaults already point
-# at the real Walmart Artifactory/proxy endpoints, so you only need to pass
+# for the reference implementation. Its CORPORATIVE_* defaults are generic
+# placeholder URLs (no real hostname committed), so you only need to pass
 # through service-specific vars (PF_DATABASE_URL, [SERVICE_NAME]_API_KEY, ...).
 .PHONY: env-write
 env-write: ## Write .env file with service-specific defaults (delegates to scripts/write_env.sh)

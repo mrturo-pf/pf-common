@@ -7,17 +7,17 @@
 #   pf_corporate_tooling_env_block "$CORPORATIVE_PIP_INDEX" \
 #     "$CORPORATIVE_NPM_REGISTRY" "$CORPORATIVE_PROXY"
 #
-# Each argument falls back to the real Walmart Artifactory/proxy endpoint
-# when the caller passes an empty string (the common case: a service's
-# write_env.sh does `CORPORATIVE_PIP_INDEX="${CORPORATIVE_PIP_INDEX:-}"`,
-# i.e. blank unless the developer's shell already exports an override).
-# `common.mk`'s `install`/`duplicate-code-*` targets probe
-# CORPORATIVE_PIP_INDEX to auto-detect the Walmart VPN, so these defaults
-# make that detection work out of the box instead of silently no-op'ing.
+# Each argument falls back to a generic placeholder URL (same shape as the
+# real corporate Artifactory/proxy endpoints, domain redacted) when the
+# caller passes an empty string. This keeps freshly-generated .env files
+# non-blank and self-documenting without hardcoding any real internal
+# hostname into the repo. Export the real values in your shell (or a local,
+# gitignored .env) to enable the actual VPN auto-detection in common.mk's
+# install/duplicate-code-* targets.
 
-_PF_DEFAULT_CORPORATIVE_PIP_INDEX="https://pypi.ci.artifacts.walmart.com/artifactory/api/pypi/external-pypi/simple"
-_PF_DEFAULT_CORPORATIVE_NPM_REGISTRY="https://npm.ci.artifacts.walmart.com/artifactory/api/npm/external-npm"
-_PF_DEFAULT_CORPORATIVE_PROXY="http://sysproxy.wal-mart.com:8080"
+_PF_DEFAULT_CORPORATIVE_PIP_INDEX="https://pypi.ci.artifacts.corporative.com/artifactory/api/pypi/pythonhosted-pypi-release-remote/simple"
+_PF_DEFAULT_CORPORATIVE_NPM_REGISTRY="https://npm.ci.artifacts.corporative.com/artifactory/api/npm/external-npm"
+_PF_DEFAULT_CORPORATIVE_PROXY="http://sysproxy.corpo-rative.com:8080"
 
 # pf_corporate_tooling_env_block <pip-index> <npm-registry> <proxy> --
 # prints the comment + 3 CORPORATIVE_* lines that are identical, verbatim,
