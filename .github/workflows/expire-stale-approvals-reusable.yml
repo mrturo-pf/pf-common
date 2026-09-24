@@ -1,0 +1,108 @@
+# ==============================================================================
+# REUSABLE Expire Stale Deployment Approvals
+# ==============================================================================
+#
+# GitHub environment protection rules ("required reviewers") have no native
+# timeout: a pending deployment approval waits forever until a human
+# approves or rejects it. This workflow polls for runs stuck in "waiting"
+# and auto-rejects any older than `max_wait_hours`, so a backlog of
+# approved-late-or-never deploys can't quietly pile up.
+#
+# WHY GH_PAT (not the default GITHUB_TOKEN):
+# GitHub deliberately blocks the automatic GITHUB_TOKEN from approving or
+# rejecting environment deployment protection rules -- if a workflow could
+# approve its own gate, "required reviewers" would be meaningless. A
+# personal access token (repo scope) is required instead. This repo's
+# GH_PAT secret (already used for cross-repo checkouts) covers this too.
+#
+# USAGE FROM REPOS (schedule lives in the caller, not here):
+#
+# ```yaml
+# name: CI / Expire Stale Deployment Approvals
+# on:
+#   schedule:
+#     - cron: '0 * * * *'
+#   workflow_dispatch: {}
+# jobs:
+#   expire:
+#     uses: mrturo-pf/pf-common/.github/workflows/expire-stale-approvals-reusable.yml@main
+#     with:
+#       repo_name: pf-rates
+#     secrets: inherit
+# ```
+#
+# ==============================================================================
+
+name: Expire Stale Deployment Approvals (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      repo_name:
+        description: 'Repository name (pf-rates, pf-payroll, etc.)'
+        required: true
+        type: string
+      max_wait_hours:
+        description: 'Reject pending approvals waiting longer than this (hours)'
+        required: false
+        type: number
+        default: 12
+
+permissions: {}
+
+jobs:
+  expire:
+    name: Expire stale approvals
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT }}
+      REPO: mrturo-pf/${{ inputs.repo_name }}
+      MAX_HOURS: ${{ inputs.max_wait_hours }}
+
+    steps:
+      - name: Reject pending deployments older than max_wait_hours
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "GH_PAT secret is not set -- the default GITHUB_TOKEN cannot"
+            echo "approve/reject deployments (GitHub blocks that by design)."
+            echo "Set the GH_PAT repo secret to enable auto-expiry. Skipping."
+            exit 0
+          fi
+
+          NOW_EPOCH=$(date -u +%s)
+
+          RUNS=$(gh run list --repo "$REPO" --status waiting --limit 100 \
+            --json databaseId,createdAt --jq '.[] | [.databaseId, .createdAt] | @tsv')
+
+          if [ -z "$RUNS" ]; then
+            echo "No waiting runs for $REPO."
+            exit 0
+          fi
+
+          while IFS=$'\t' read -r RUN_ID CREATED_AT; do
+            [ -z "$RUN_ID" ] && continue
+            CREATED_EPOCH=$(date -u -d "$CREATED_AT" +%s)
+            AGE_HOURS=$(( (NOW_EPOCH - CREATED_EPOCH) / 3600 ))
+            echo "Run $RUN_ID has been waiting ${AGE_HOURS}h (limit ${MAX_HOURS}h)"
+
+            if [ "$AGE_HOURS" -lt "$MAX_HOURS" ]; then
+              continue
+            fi
+
+            ENV_IDS=$(gh api "repos/$REPO/actions/runs/$RUN_ID/pending_deployments" \
+              --jq '[.[].environment.id]')
+
+            if [ "$ENV_IDS" = "[]" ]; then
+              echo "  -> no pending_deployments left (already resolved) -- skipping"
+              continue
+            fi
+
+            echo "  -> rejecting (waited ${AGE_HOURS}h >= ${MAX_HOURS}h)"
+            PAYLOAD=$(jq -n --argjson envs "$ENV_IDS" \
+              --arg comment "Auto-rejected: pending approval exceeded the ${MAX_HOURS}h limit (expire-stale-approvals workflow)." \
+              '{environment_ids: $envs, state: "rejected", comment: $comment}')
+            echo "$PAYLOAD" | gh api "repos/$REPO/actions/runs/$RUN_ID/pending_deployments" \
+              --input - -X POST >/dev/null
+          done <<< "$RUNS"
