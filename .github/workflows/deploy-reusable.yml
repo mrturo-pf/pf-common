@@ -70,6 +70,20 @@ on:
         type: boolean
         default: true
 
+# Serialize deploys per service instead of letting them race. Without this,
+# approving two pending deploys close together (e.g. clearing a backlog of
+# queued runs) lets both reach the 'deploy' job at roughly the same time --
+# each pushes/deploys its own image to the SAME Cloud Run service, and
+# whichever wins the traffic-routing race makes the OTHER run's smoke-test
+# fail (it correctly detects it's no longer hitting 'its' revision -- see
+# smoke-test job below). cancel-in-progress: false queues runs instead of
+# killing an in-flight one, which could abort a deploy mid-flight (image
+# pushed, traffic not yet verified) -- each run still completes in order,
+# just never overlapping with another for the same service.
+concurrency:
+  group: deploy-${{ inputs.repo_name }}-production
+  cancel-in-progress: false
+
 env:
   REGION: us-central1
   AR_REPO: ${{ inputs.repo_name }}
