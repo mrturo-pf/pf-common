@@ -45,7 +45,9 @@
 #   MAIL_TO                  - Recipient address(es)
 #
 # Repository-specific secrets are accessed automatically (e.g. PF_RATES_API_KEY,
-# PF_PAYROLL_API_KEY, PF_RATES_URL) when they exist.
+# PF_PAYROLL_API_KEY) when they exist. PF_RATES_URL is NOT a secret -- for
+# pf-payroll it's resolved dynamically at deploy time via 'gcloud run services
+# describe pf-rates' and injected as a plain env var (see the Deploy step).
 #
 # ENVIRONMENTS REQUIRED:
 #   - production (with required reviewers for manual approval)
@@ -454,6 +456,24 @@ jobs:
             SECRETS_ARG="${SECRETS_ARG},PF_RATES_GDRIVE_EXPORT_FOLDER_ID=PF_RATES_GDRIVE_EXPORT_FOLDER_ID:latest"
           fi
 
+          # Plain (non-secret) env vars. PF_RATES_URL is a public Cloud Run
+          # URL, not sensitive -- resolved dynamically here instead of
+          # hardcoded, since Cloud Run URLs aren't derivable from the
+          # project ID alone and this avoids a second manually-maintained
+          # copy of it going stale if pf-rates is ever redeployed elsewhere.
+          ENV_VARS_ARG="FINANCIAL_DATA_HTTP_PROXY="
+          if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
+            echo "Resolving pf-rates Cloud Run URL..."
+            PF_RATES_URL=$(gcloud run services describe pf-rates \
+              --region="${{ env.REGION }}" --format="value(status.url)")
+            if [ -z "${PF_RATES_URL}" ]; then
+              echo "ERROR: could not resolve pf-rates' Cloud Run URL -- has pf-rates been deployed to this project/region?"
+              exit 1
+            fi
+            echo "pf-rates URL: ${PF_RATES_URL}"
+            ENV_VARS_ARG="${ENV_VARS_ARG},PF_RATES_URL=${PF_RATES_URL}"
+          fi
+
           # Build gcloud command with optional Cloud SQL instance
           echo "Building deployment command..."
           GCLOUD_CMD="gcloud run deploy ${{ env.SERVICE_NAME }}"
@@ -468,7 +488,7 @@ jobs:
           GCLOUD_CMD="$GCLOUD_CMD --cpu=1"
           GCLOUD_CMD="$GCLOUD_CMD --port=8080"
           GCLOUD_CMD="$GCLOUD_CMD --set-secrets=${SECRETS_ARG}"
-          GCLOUD_CMD="$GCLOUD_CMD --set-env-vars=FINANCIAL_DATA_HTTP_PROXY="
+          GCLOUD_CMD="$GCLOUD_CMD --set-env-vars=${ENV_VARS_ARG}"
           GCLOUD_CMD="$GCLOUD_CMD --quiet"
           
           # Add Cloud SQL instance if provided
