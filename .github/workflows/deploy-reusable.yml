@@ -71,6 +71,11 @@ on:
         required: false
         type: boolean
         default: true
+      database_secret_name:
+        description: 'Secret Manager name containing this service database URL'
+        required: false
+        type: string
+        default: PF_DATABASE_URL
 
 # Serialize deploys per service instead of letting them race. Without this,
 # approving two pending deploys close together (e.g. clearing a backlog of
@@ -323,9 +328,9 @@ jobs:
           
           MISSING_SECRETS=()
           
-          # Check PF_DATABASE_URL
-          if ! gcloud secrets describe PF_DATABASE_URL --quiet > /dev/null 2>&1; then
-            MISSING_SECRETS+=("PF_DATABASE_URL")
+          DATABASE_SECRET="${{ inputs.database_secret_name }}"
+          if ! gcloud secrets describe "${DATABASE_SECRET}" --quiet > /dev/null 2>&1; then
+            MISSING_SECRETS+=("${DATABASE_SECRET}")
           fi
           
           # Check service-specific API key
@@ -365,9 +370,9 @@ jobs:
             echo "Create them using:"
             echo ""
             for SECRET in "${MISSING_SECRETS[@]}"; do
-              if [ "${SECRET}" = "PF_DATABASE_URL" ]; then
-                echo "  echo -n 'postgresql+asyncpg://USER:PASS@/pf_db?host=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:us-central1:pf-db' | \\"
-                echo "    gcloud secrets create PF_DATABASE_URL --data-file=- --replication-policy=automatic"
+              if [ "${SECRET}" = "${DATABASE_SECRET}" ]; then
+                echo "  echo '<postgresql-connection-string>' | \\\\"
+                echo "    gcloud secrets create ${DATABASE_SECRET} --data-file=- --replication-policy=automatic"
               elif [ "${SECRET}" = "PF_RATES_GDRIVE_EXPORT_FOLDER_ID" ]; then
                 echo "  echo -n '<google-drive-folder-id>' | \\"
                 echo "    gcloud secrets create PF_RATES_GDRIVE_EXPORT_FOLDER_ID --data-file=- --replication-policy=automatic"
@@ -441,7 +446,7 @@ jobs:
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
-          SECRETS_ARG="PF_DATABASE_URL=PF_DATABASE_URL:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
+          SECRETS_ARG="${{ inputs.database_secret_name }}=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
           # Optional: PF_RATES_API_KEY for pf-payroll (calling pf-rates)
           if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
