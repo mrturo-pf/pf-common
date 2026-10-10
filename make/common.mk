@@ -183,7 +183,7 @@ duplicate-code-src: ## Detect duplicated code in src only
 
 .PHONY: _duplicate-code
 _duplicate-code:
-	@JCPD_PLATFORM_PACKAGE="jscpd-$$(node -p 'process.platform + "-" + process.arch')"; \
+	@JCPD_PLATFORM_PACKAGE="$$(node -p 'process.platform === "linux" ? "jscpd-linux-" + process.arch + (process.report.getReport().header.glibcVersionRuntime ? "-gnu" : "-musl") : process.platform === "win32" ? "jscpd-windows-" + process.arch + "-msvc" : "jscpd-" + process.platform + "-" + process.arch')"; \
 	if [ -n "$(CORPORATIVE_NPM_REGISTRY)" ] && [ -n "$(CORPORATIVE_PROXY)" ]; then \
 		export npm_config_registry="$(CORPORATIVE_NPM_REGISTRY)"; \
 		export HTTP_PROXY="$(CORPORATIVE_PROXY)"; \
