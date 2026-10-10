@@ -183,13 +183,15 @@ duplicate-code-src: ## Detect duplicated code in src only
 
 .PHONY: _duplicate-code
 _duplicate-code:
-	@if curl -sfL --connect-timeout 3 --max-time 5 -o /dev/null "$(CORPORATIVE_PIP_INDEX)/" 2>/dev/null; then \
-		echo "  -> Corporative VPN detected — routing npm through sysproxy + Artifactory registry"; \
+	@JCPD_PLATFORM_PACKAGE="jscpd-$$(node -p 'process.platform + "-" + process.arch')"; \
+	if [ -n "$(CORPORATIVE_NPM_REGISTRY)" ] && [ -n "$(CORPORATIVE_PROXY)" ]; then \
 		export npm_config_registry="$(CORPORATIVE_NPM_REGISTRY)"; \
 		export HTTP_PROXY="$(CORPORATIVE_PROXY)"; \
 		export HTTPS_PROXY="$(CORPORATIVE_PROXY)"; \
 	fi; \
-	npx --yes jscpd --mode strict --min-lines 10 --min-tokens 70 --threshold $(DUPLICATE_THRESHOLD) --reporters console --ignore "**/.git/**,**/.venv/**,**/.mypy_cache/**,**/.pytest_cache/**,**/.ruff_cache/**,**/.tox/**,**/.nox/**,**/.coverage/**,**/build/**,**/dist/**,**/.github/**,**/node_modules/**" $(DUPLICATE_PATH)
+	export npm_config_fetch_retries=0; \
+	export npm_config_fetch_timeout=10000; \
+	npx --yes --package=jscpd --package="$$JCPD_PLATFORM_PACKAGE" jscpd --mode strict --min-lines 10 --min-tokens 70 --threshold $(DUPLICATE_THRESHOLD) --reporters console --ignore "**/.git/**,**/.venv/**,**/.mypy_cache/**,**/.pytest_cache/**,**/.ruff_cache/**,**/.tox/**,**/.nox/**,**/.coverage/**,**/build/**,**/dist/**,**/.github/**,**/node_modules/**" $(DUPLICATE_PATH)
 
 .PHONY: security-scan
 security-scan: ## Scan filesystem for misconfigs and secrets
