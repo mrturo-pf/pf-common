@@ -34,7 +34,7 @@ pf-common/
 
 ## What Goes Here?
 
-### `common/make/`
+### `make/`
 
 Shared Makefile infrastructure for FastAPI microservices:
 
@@ -46,7 +46,7 @@ Shared Makefile infrastructure for FastAPI microservices:
 
 See [make/README.md](make/README.md) for detailed usage.
 
-### `common/scripts/`
+### `scripts/`
 
 Shared utility scripts used across multiple repositories:
 
@@ -62,7 +62,7 @@ Shared utility scripts used across multiple repositories:
 
 **Usage:**
 ```bash
-python common/scripts/sync_deps.py
+python scripts/sync_deps.py
 
 # Sourced, not run directly, from a service's own scripts/local_stack.sh:
 source ../pf-common/scripts/local_stack_common.sh
@@ -99,7 +99,7 @@ common/
 APP_PORT := 8002
 APP_MODULE := new_service.interfaces.api.main:app
 
-include ../common/make/common.mk
+include ../pf-common/make/common.mk
 
 .PHONY: env-write
 env-write:
@@ -120,7 +120,7 @@ make run          # Start service on port 8002
 ```bash
 # 1. Copy template
 mkdir pf-new-service
-cp common/make/templates/service.mk pf-new-service/Makefile
+cp make/templates/service.mk pf-new-service/Makefile
 
 # 2. Customize
 cd pf-new-service
@@ -134,12 +134,12 @@ make env-write
 ### Running Shared Scripts
 
 ```bash
-# Validate dependeynchronization
-python common/scripts/sync_deps.py
+# Validate dependency synchronization
+python scripts/sync_deps.py
 
 # Add to CI (.github/workflows/test.yml)
 - name: Check dependency sync
-  run: python common/scripts/sync_deps.py
+  run: python scripts/sync_deps.py
 ```
 
 ## Design Principles
