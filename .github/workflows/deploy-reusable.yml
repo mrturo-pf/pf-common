@@ -446,7 +446,7 @@ jobs:
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
-          SECRETS_ARG="${{ inputs.database_secret_name }}=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
+          SECRETS_ARG="PF_DATABASE_URL=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
           # Optional: PF_RATES_API_KEY for pf-payroll (calling pf-rates)
           if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
