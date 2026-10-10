@@ -155,6 +155,12 @@ python common/scripts/sync_deps.py
    Artifact Registry scanning, on-demand jobs over always-on services. Any change here
    affects cost for every consuming service at once - evaluate the cost delta first.
 
+## Test-driven development
+
+Use TDD for behavioral changes to shared infrastructure. Define executable tests or validation checks before implementation, especially for shared Make targets and scripts. Use ATDD or contract tests for behavior consumed by multiple repositories, and verify every affected service. Use BDD scenarios only when they clarify shared business behavior.
+
+Documentation-only, formatting-only, and mechanical refactor changes do not require new tests, but all applicable validation commands must still run.
+
 ## Maintenance Guidelines
 
 ### Adding New Shared Infrastructure
