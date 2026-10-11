@@ -76,6 +76,14 @@ on:
         required: false
         type: string
         default: PF_DATABASE_URL
+      workload_identity_provider:
+        description: 'Full GitHub OIDC Workload Identity provider resource name'
+        required: true
+        type: string
+      deployer_service_account:
+        description: 'Service-specific WIF deployer service account email'
+        required: true
+        type: string
 
 # Serialize deploys per service instead of letting them race. Without this,
 # approving two pending deploys close together (e.g. clearing a backlog of
@@ -309,6 +317,8 @@ jobs:
         uses: ./.pf-common/.github/actions/gcp-auth
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ inputs.workload_identity_provider }}
+          service_account: ${{ inputs.deployer_service_account }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       # Pre-flight check: verify Secret Manager secrets exist before deploying
