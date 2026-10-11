@@ -38,14 +38,15 @@ Superseded-by: none
 - [x] Minimum deployer permission script prepared for review; no permissions have been granted yet.
 - [x] Minimum service-specific deployer permissions granted and validated.
 - [x] Shared workflow and caller WIF inputs prepared locally with temporary key fallback.
-- [ ] WIF workflow changes committed, released through `pf-common@main`, and validated in controlled CI.
-- [ ] Non-production or controlled validation path selected.
-- [ ] WIF provider and deployer identities created.
-- [ ] Service-specific deployer permissions validated.
-- [ ] Runtime over-permission removed and service health validated.
-- [ ] Production workflows cut over to WIF.
-- [ ] Legacy keys disabled/revoked after rollback window.
-- [ ] Cleanup and closure evidence recorded.
+- [x] WIF workflow changes committed, released through `pf-common@main`, and validated in controlled CI.
+- [x] Non-production or controlled validation path selected (controlled production validation completed).
+- [x] WIF provider and deployer identities created.
+- [x] Service-specific deployer permissions validated.
+- [x] Runtime deployment over-permission removed; runtime secret/Cloud SQL grants preserved intentionally.
+- [x] Production WIF deployment succeeded for both services.
+- [x] Production deploy workflow no longer passes `GCP_SA_KEY` to the WIF auth path.
+- [x] Legacy user-managed keys revoked and GitHub `GCP_SA_KEY` secrets removed.
+- [x] Final legacy Artifact Registry repository-admin grant removed and cleanup evidence recorded.
 
 ## 2. Implementation slices
 
@@ -171,6 +172,9 @@ No repository may introduce private keys, WIF tokens, or secret values into Git.
 | 2026-10-11 | in progress | Prepared the minimum deployer-permission mutation entry point: `run.developer` project grant, repository-scoped Artifact Registry writer, and runtime-account-scoped Service Account User. | Local syntax and ignore checks passed; no mutation |
 | 2026-10-11 | in progress | Minimum deployer grants applied: project `run.developer`, repository Artifact Registry writer, and matching runtime Service Account User. Legacy runtime grants unchanged. | Sanitized Cloud Shell archive received; no secret/runtime/key mutation |
 | 2026-10-11 | in progress | Prepared shared auth/reusable workflow and rates/payroll callers for WIF with `id-token: write`; JSON-key fallback retained pending controlled CI validation. | Local workflow diff; no push or deployment |
+| 2026-10-11 | in progress | WIF deploy workflow completed successfully for both `pf-rates` and `pf-payroll`, including deploy and smoke validation after manual production approval. | Runs 38168560852 and 38168566677 |
+| 2026-10-11 | in progress | Removed `GCP_SA_KEY` from the production reusable deploy authentication path locally; retained generic fallback for setup/rollback workflows. Legacy key/grant cleanup remains gated by the seven-day rollback window. | Local diff; no key or IAM mutation |
+| 2026-10-11 | in progress | Legacy user-managed keys and deploy grants removed; final legacy Artifact Registry repository-admin grant removed. WIF deployers and runtime secret/Cloud SQL grants preserved. | Cleanup archives 08 and 09 |
 
 ## 6. Slice 0 decision request
 

@@ -347,7 +347,19 @@ WIF provider and deployer identities.
 This change is not yet released. It must pass workflow validation and a controlled
 CI deployment before the temporary `GCP_SA_KEY` fallback is removed.
 
+### 5.16 Deployment fallback removal prepared (2026-10-11)
+
+The reusable deployment workflow was updated locally to stop passing
+`GCP_SA_KEY` to the deploy authentication action. The action retains a generic
+key fallback for separate setup/rollback workflows, but the production deploy
+path now requires the explicit WIF provider and deployer inputs.
+
+The GitHub secret and existing legacy IAM grants remain in place during the
+approved seven-day rollback window. Their removal is a separate cleanup mutation
+and must not happen before the window expires.
+
 ## 6. Facts, inferences, and assumptions
+
 
 
 
