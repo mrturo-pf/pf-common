@@ -1,7 +1,7 @@
 # Investigation: Cloud deployer identity hardening
 
 Date: 2026-10-11
-Status: investigating
+Status: closed
 Level: L
 Scope: Separation of CI deployer, Cloud Run runtime, migration, and administration identities; least-privilege deployment access; and Workload Identity Federation readiness.
 Owner: `pf-common`

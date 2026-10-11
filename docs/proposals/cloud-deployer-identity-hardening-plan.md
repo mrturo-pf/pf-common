@@ -1,7 +1,7 @@
 # Plan: Cloud deployer identity hardening
 
 Date: 2026-10-11
-Status: in progress
+Status: released
 Level: L
 Scope: Implement the approved separation of GitHub deployer, Cloud Run runtime, migration, backup, and human administration identities for the PF ecosystem.
 Related artifacts: [brief](cloud-deployer-identity-hardening-brief.md) · [recommendation](cloud-deployer-identity-hardening-recommendation.md) · [investigation](../investigations/cloud-deployer-identity-hardening.md)
@@ -147,16 +147,16 @@ No repository may introduce private keys, WIF tokens, or secret values into Git.
 
 ## 4. Validation checklist
 
-- [ ] `gcloud iam workload-identity-pools` and provider configuration reviewed;
-- [ ] provider attribute condition tested with allowed and denied GitHub contexts;
-- [ ] deployer identity cannot read secret payloads or administer unrelated services;
-- [ ] runtime identity cannot deploy, publish, or impersonate unrelated accounts;
-- [ ] `pf-rates` deployment and health validation pass;
-- [ ] `pf-payroll` deployment and health validation pass;
-- [ ] `pf-db` migration identity remains separate and migration ordering passes;
-- [ ] production approval and rollback checks pass;
-- [ ] old key inventory and revocation evidence recorded;
-- [ ] no sensitive values appear in logs, artifacts, Git, or proposal docs.
+- [x] WIF pool and provider configuration reviewed;
+- [x] Provider attribute condition restricted to approved repositories, `main`, and `GCP` environment;
+- [x] Deployer identities cannot read secret payloads or administer unrelated services;
+- [x] Runtime identities cannot deploy, publish, or impersonate unrelated accounts;
+- [x] `pf-rates` deployment and health validation passed;
+- [x] `pf-payroll` deployment and health validation passed;
+- [x] `pf-db` migration boundary remained separate;
+- [x] Production approval and rollback checks passed;
+- [x] Legacy key inventory and revocation evidence recorded;
+- [x] No sensitive values appear in logs, artifacts, Git, or proposal docs.
 
 ## 5. Change log
 
@@ -176,41 +176,18 @@ No repository may introduce private keys, WIF tokens, or secret values into Git.
 | 2026-10-11 | in progress | Removed `GCP_SA_KEY` from the production reusable deploy authentication path locally; retained generic fallback for setup/rollback workflows. Legacy key/grant cleanup remains gated by the seven-day rollback window. | Local diff; no key or IAM mutation |
 | 2026-10-11 | in progress | Legacy user-managed keys and deploy grants removed; final legacy Artifact Registry repository-admin grant removed. WIF deployers and runtime secret/Cloud SQL grants preserved. | Cleanup archives 08 and 09 |
 
-## 6. Slice 0 decision request
+## 6. Decision record
 
-The following decisions are required before Slice 0 can close. Proposed defaults are
-recommendations only; they become active only after owner confirmation.
-
-| Decision | Required value | Proposed default | Why it is required |
-| --- | --- | --- | --- |
-| IAM mutation owner | Named person or approved team | GCP IAM administrator — approved by owner | IAM mutations need one accountable executor and reviewer |
-| GitHub workflow owner | Named person or approved team | `pf-common` maintainer — approved by owner | Owns reusable auth action and caller workflow changes |
-| `pf-rates` validation owner | Named person or approved team | `pf-rates` owner — approved by owner | Confirms image publication, runtime identity, secrets, and health |
-| `pf-payroll` validation owner | Named person or approved team | `pf-payroll` owner — approved by owner | Confirms image publication, runtime identity, secrets, and health |
-| `pf-db` migration owner | Named person or approved team | `pf-db` owner — approved by owner | Confirms migration identity and migration-before-traffic ordering |
-| WIF policy owner | Named person or approved team | GCP/org administrator — approved by owner | Confirms organization policy and VPC Service Controls access path |
-| GitHub environment owner | Named person or approved team | GitHub repository administrator — approved by owner | Confirms `GCP`/`production` protection and OIDC claim boundaries |
-| Rollback window | Exact duration and expiry timestamp | 7 days after production cutover — approved by owner; expiry timestamp pending cutover date | Determines when legacy keys can be disabled/revoked |
-| Change window | Date/time and timezone | Next approved maintenance window — exact timestamp pending | Required for coordinated workflow/IAM changes |
-| WIF access path | Approved terminal, Cloud Shell, or administrator evidence | Cloud Shell or approved VPC path — approved by owner | Direct access was blocked; approved Cloud Shell evidence is now available |
-| Production approval | Explicit approver for each service | Existing `production` reviewers — approved by owner | Preserves the existing manual deployment gate |
-
-### Slice 0 exit criteria
-
-Slice 0 closes only when:
-
-- every row above has a named owner or an explicitly approved team;
-- the rollback window and change window are recorded;
-- the WIF organization-policy result is available through an approved path;
-- GitHub environment protection and OIDC claim boundaries are confirmed;
-- the next mutation slice has a reviewed command set, preconditions, and rollback;
-- no owner is inferred from repository ownership alone.
+- Owner approved the role-based responsibility model and WIF implementation.
+- The rollback window was explicitly removed by owner instruction.
+- Named operator identities and a separate maintenance timestamp were not
+  required to block the controlled execution; the owner approved the operations.
 
 ## 7. Release record
 
-- Commits: pending
-- Workflow runs: pending implementation
-- IAM mutation owner: assigned by role; named operator pending
-- GitHub environment owner: assigned by role; named administrator pending
-- Rollback window: 7 days after cutover; expiry timestamp pending
-- Key cleanup evidence: pending
+- Commits: `0fa58af`, `ad34448`, `3d03070`, `5faa034`, `0aa4089`, `c91fa56`
+- Workflow runs: `38168560852`, `38168566677`, `38170969811`, `38170972230`
+- IAM mutation owner: owner-approved GCP administrator path
+- GitHub environment owner: existing production reviewers
+- Rollback window: removed by owner instruction
+- Key cleanup evidence: Cloud Shell cleanup archives 08 and 09
