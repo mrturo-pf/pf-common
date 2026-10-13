@@ -498,6 +498,8 @@ jobs:
           GCLOUD_CMD="$GCLOUD_CMD --service-account=${{ env.RUNTIME_SA }}"
           GCLOUD_CMD="$GCLOUD_CMD --min-instances=0"
           GCLOUD_CMD="$GCLOUD_CMD --max-instances=2"
+          GCLOUD_CMD="$GCLOUD_CMD --concurrency=80"
+          GCLOUD_CMD="$GCLOUD_CMD --timeout=300"
           GCLOUD_CMD="$GCLOUD_CMD --memory=512Mi"
           GCLOUD_CMD="$GCLOUD_CMD --cpu=1"
           GCLOUD_CMD="$GCLOUD_CMD --port=8080"
