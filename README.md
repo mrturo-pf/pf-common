@@ -7,12 +7,12 @@ This repository contains shared infrastructure, scripts, and configurations used
 pf-common provides reusable Make targets, validation scripts, and templates for FastAPI microservices in the PF ecosystem.
 
 **Services using pf-common:**
-- [pf-payroll](../pf-payroll) - Chilean payroll microservice
-- [pf-rates](../pf-rates) - Financial reference data microservice
+- [pf-payroll](https://github.com/mrturo-pf/pf-payroll) - Chilean payroll microservice
+- [pf-rates](https://github.com/mrturo-pf/pf-rates) - Financial reference data microservice
 - Future services...
 
 **NOT used by:**
-- [pf-db](../pf-db) - Database repository (different type)
+- [pf-db](https://github.com/mrturo-pf/pf-db) - Database repository (different type)
 
 ## Directory Structure
 
@@ -203,6 +203,6 @@ When adding new shared infrastructure:
 
 ## See Also
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) - Ecosystem overview
+- [ARCHITECTURE.md](https://github.com/mrturo-pf/pf-base/blob/main/architecture/README.md) - Ecosystem overview
 - [make/README.md](make/README.md) - Makefile usage guide
 - Service-specific READMEs in each repository
