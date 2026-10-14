@@ -3,15 +3,14 @@
 # ==============================================================================
 #
 # This reusable workflow provides CI/CD for PF microservices deploying to GCP
-# Cloud Run. It eliminates duplication by centralizing the 7-job pipeline:
+# Cloud Run. It eliminates duplication by centralizing the 6-job pipeline:
 #   1. test      - Lint, typecheck, coverage, security scan
 #   2. build     - Docker build, Trivy scan, artifact packaging
-#   3. gate      - Manual approval (production environment)
-#   4. deploy    - Push to Artifact Registry, deploy to Cloud Run
-#   5. smoke-test - Curl the deployed /health endpoint; verify it's the
+#   3. deploy    - Push to Artifact Registry, deploy to Cloud Run
+#   4. smoke-test - Curl the deployed /health endpoint; verify it's the
 #                    right service and a genuinely fresh revision
-#   6. notify-failure  - Email on pipeline failure
-#   7. notify-success  - Email on successful, verified deployment
+#   5. notify-failure  - Email on pipeline failure
+#   6. notify-success  - Email on successful, verified deployment
 #
 # USAGE FROM REPOS:
 #
@@ -50,7 +49,6 @@
 # describe pf-rates' and injected as a plain env var (see the Deploy step).
 #
 # ENVIRONMENTS REQUIRED:
-#   - production (with required reviewers for manual approval)
 #   - GCP (for deployment credentials)
 #
 # For detailed setup instructions, see docs/deployment.md in each repository.
@@ -66,11 +64,6 @@ on:
         description: 'Repository name (pf-rates, pf-payroll, etc.)'
         required: true
         type: string
-      require_approval:
-        description: 'Require manual approval before deployment (production gate)'
-        required: false
-        type: boolean
-        default: true
       database_secret_name:
         description: 'Secret Manager name containing this service database URL'
         required: false
@@ -253,49 +246,15 @@ jobs:
           path: /tmp/${{ inputs.repo_name }}-release.tar
           retention-days: 1
 
-  # ----------------------------------------------------------------------------
-  # gate: manual approval before deploying (only on push to main)
-  # Two separate gate jobs with mutually exclusive conditions:
-  # - gate-with-approval: requires manual approval (environment: production)
-  # - gate-without-approval: runs immediately (no environment)
-  # Configure required reviewers for the "production" environment in:
-  #   GitHub → Settings → Environments → production → Required reviewers
-  # ----------------------------------------------------------------------------
-  gate-with-approval:
-    name: Approval Gate (Manual)
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && inputs.require_approval
-    environment: production
-
-    steps:
-      - name: Deployment approved
-        run: echo "Manual approval granted — proceeding to deploy."
-
-  gate-without-approval:
-    name: Approval Gate (Bypassed)
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !inputs.require_approval
-
-    steps:
-      - name: Approval bypassed
-        run: echo "Manual approval disabled — proceeding directly to deploy."
-
-  # ----------------------------------------------------------------------------
   # deploy: push image to AR, deploy to Cloud Run (only on push to main)
   # Migrations are handled by pf-db before this service receives traffic.
+  # The merge to protected main is the release approval.
   # ----------------------------------------------------------------------------
   deploy:
     name: Deploy to Cloud Run
     runs-on: ubuntu-latest
-    needs: [gate-with-approval, gate-without-approval]
-    # Run if EITHER gate completed successfully (one will be skipped, one will run)
-    if: |
-      github.event_name == 'push' && 
-      github.ref == 'refs/heads/main' && 
-      !cancelled() &&
-      (needs.gate-with-approval.result == 'success' || needs.gate-without-approval.result == 'success')
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: GCP
     outputs:
       service_url: ${{ steps.deployed-url.outputs.url }}
@@ -544,13 +503,8 @@ jobs:
     name: Smoke Test (Health Check)
     runs-on: ubuntu-latest
     needs: deploy
-    # 'deploy' needs BOTH gate-with-approval and gate-without-approval, and
-    # exactly one of those is ALWAYS skipped by design (mutually-exclusive
-    # approval/bypass pattern). Without always() + an explicit needs.deploy
-    # check, GitHub's implicit success() walks that whole ancestor chain,
-    # sees the skipped gate, and skips this job too — even though 'deploy'
-    # itself genuinely succeeded. Same reasoning as notify-success/failure
-    # below.
+    # The deploy job is the only prerequisite; the explicit result check keeps
+    # this job from being skipped when earlier PR-only jobs do not run on main.
     if: |
       always() &&
       github.event_name == 'push' &&
@@ -704,7 +658,7 @@ jobs:
             - Branch: ${{ github.ref_name }}
             - Commit: ${{ github.sha }}
             - Author: ${{ github.actor }}
-            - Approval: ${{ inputs.require_approval && 'Manual' || 'Automatic' }}
+            - Release approval: merge to protected main
 
             View details:
             ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
