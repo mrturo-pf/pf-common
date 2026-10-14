@@ -112,7 +112,7 @@ jobs:
   # test: lint, static analysis, unit + integration tests
   # ----------------------------------------------------------------------------
   test:
-    name: Test & Lint
+    name: Test & lint
     runs-on: ubuntu-latest
 
     steps:
@@ -194,7 +194,7 @@ jobs:
   # The release artifact (tagged for AR) is only produced on push to main.
   # ----------------------------------------------------------------------------
   build:
-    name: Build & Scan
+    name: Build & security scan
     runs-on: ubuntu-latest
     needs: test
 
@@ -258,7 +258,7 @@ jobs:
   # The merge to protected main is the release approval.
   # ----------------------------------------------------------------------------
   deploy:
-    name: Deploy to Cloud Run
+    name: Deploy service to Cloud Run
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -507,7 +507,7 @@ jobs:
   #     serving traffic somewhere
   # ----------------------------------------------------------------------------
   smoke-test:
-    name: Smoke Test (Health Check)
+    name: Verify deployed service health
     runs-on: ubuntu-latest
     needs: deploy
     # The deploy job is the only prerequisite; the explicit result check keeps
@@ -579,7 +579,7 @@ jobs:
   # notify-failure: email alert when any job fails on push to main
   # ----------------------------------------------------------------------------
   notify-failure:
-    name: Notify — Failure
+    name: Notify deployment failure
     runs-on: ubuntu-latest
     needs: [test, build, deploy, smoke-test]
     if: |
@@ -626,7 +626,7 @@ jobs:
   # notify-success: email confirmation after a successful full deploy
   # ----------------------------------------------------------------------------
   notify-success:
-    name: Notify — Success
+    name: Notify deployment success
     runs-on: ubuntu-latest
     needs: [deploy, smoke-test]
     if: |
