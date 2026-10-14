@@ -9,11 +9,7 @@ on:
       - ".github/workflows/language-check.yml"
       - ".githooks/pre-commit"
   pull_request:
-    paths:
-      - "**/*.md"
-      - "**/*.mdx"
-      - ".github/workflows/language-check.yml"
-      - ".githooks/pre-commit"
+    branches: [main]
   workflow_dispatch: {}
 
 permissions:
