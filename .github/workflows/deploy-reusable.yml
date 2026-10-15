@@ -122,8 +122,6 @@ jobs:
           fi
           if git rev-parse --verify "${BEFORE_SHA}^{commit}" >/dev/null 2>&1; then
             files=$(git diff --name-only "${BEFORE_SHA}" "${HEAD_SHA}")
-          elif git rev-parse --verify "${HEAD_SHA}^" >/dev/null 2>&1; then
-            files=$(git diff --name-only "${HEAD_SHA}^" "${HEAD_SHA}")
           else
             echo "docs_only=false" >> "$GITHUB_OUTPUT"
             exit 0
@@ -132,7 +130,12 @@ jobs:
             echo "docs_only=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          non_docs=$(printf '%s\n' "${files}" | grep -Ev '\.(md|mdx|txt|rst|adoc)$' || true)
+          non_docs=$(while IFS= read -r file; do
+            case "${file}" in
+              *.md|*.mdx|*.rst|*.adoc|docs/*.txt|documentation/*.txt) ;;
+              *) printf '%s\n' "${file}" ;;
+            esac
+          done <<< "${files}")
           if [ -z "${non_docs}" ]; then
             echo "docs_only=true" >> "$GITHUB_OUTPUT"
           else
@@ -543,6 +546,9 @@ jobs:
   # ----------------------------------------------------------------------------
   smoke-test:
     name: Verify deployed service health
+    concurrency:
+      group: deploy-${{ inputs.repo_name }}-production
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     needs: deploy
     # The deploy job is the only prerequisite; the explicit result check keeps
@@ -618,10 +624,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, build, deploy, smoke-test, changes]
     if: |
-      always() &&
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      (needs.test.result == 'failure' || needs.build.result == 'failure' || needs.deploy.result == 'failure' || needs.smoke-test.result == 'failure')
+      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      (needs.changes.result == 'failure' || needs.test.result == 'failure' ||
+       needs.build.result == 'failure' || needs.deploy.result == 'failure' ||
+       needs.smoke-test.result == 'failure')
 
     steps:
       - name: Checkout pf-common for composite actions
@@ -665,10 +671,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy, smoke-test, changes]
     if: |
-      always() &&
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      needs.deploy.result == 'success' &&
+      always() && github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      needs.changes.result == 'success' && needs.deploy.result == 'success' &&
       needs.smoke-test.result == 'success'
 
     steps:
