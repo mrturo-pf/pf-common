@@ -27,7 +27,7 @@
 #   deploy:
 #     uses: mrturo-pf/pf-common/.github/workflows/deploy-reusable.yml@main
 #     with:
-#       repo_name: pf-rates  # or pf-payroll
+#       repo_name: pf-rates  # service repository name
 #     secrets: inherit  # REQUIRED - passes all GitHub secrets to the workflow
 # ```
 #
@@ -43,10 +43,9 @@
 #   MAIL_FROM                - Sender address
 #   MAIL_TO                  - Recipient address(es)
 #
-# Repository-specific secrets are accessed automatically (e.g. PF_RATES_API_KEY,
-# PF_PAYROLL_API_KEY) when they exist. PF_RATES_URL is NOT a secret -- for
-# pf-payroll it's resolved dynamically at deploy time via 'gcloud run services
-# describe pf-rates' and injected as a plain env var (see the Deploy step).
+# Repository-specific secrets are accessed through configured reusable-workflow
+# inputs. Dependency service URLs and protected smoke credentials are also passed
+# by the caller, so this workflow remains service-agnostic.
 #
 # ENVIRONMENTS REQUIRED:
 #   - GCP (for deployment credentials)
@@ -84,6 +83,26 @@ on:
         description: 'Service-specific WIF deployer service account email'
         required: true
         type: string
+      dependency_service_name:
+        description: 'Optional Cloud Run service whose URL is injected into the deployment'
+        required: false
+        type: string
+        default: ''
+      dependency_env_name:
+        description: 'Environment variable receiving the dependency service URL'
+        required: false
+        type: string
+        default: ''
+      protected_smoke_path:
+        description: 'Optional protected endpoint path to smoke-test after deployment'
+        required: false
+        type: string
+        default: ''
+      protected_smoke_secret_name:
+        description: 'Optional Secret Manager secret containing the protected endpoint key'
+        required: false
+        type: string
+        default: ''
 
 # Deploy concurrency is scoped to the deploy job below. Keeping it out of the
 # workflow-level concurrency group prevents a documentation-only run from
@@ -482,16 +501,22 @@ jobs:
           # project ID alone and this avoids a second manually-maintained
           # copy of it going stale if pf-rates is ever redeployed elsewhere.
           ENV_VARS_ARG="FINANCIAL_DATA_HTTP_PROXY="
-          if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
-            echo "Resolving pf-rates Cloud Run URL..."
-            PF_RATES_URL=$(gcloud run services describe pf-rates \
-              --region="${{ env.REGION }}" --format="value(status.url)")
-            if [ -z "${PF_RATES_URL}" ]; then
-              echo "ERROR: could not resolve pf-rates' Cloud Run URL -- has pf-rates been deployed to this project/region?"
+          DEPENDENCY_SERVICE="${{ inputs.dependency_service_name }}"
+          DEPENDENCY_ENV="${{ inputs.dependency_env_name }}"
+          if [ -n "${DEPENDENCY_SERVICE}" ] || [ -n "${DEPENDENCY_ENV}" ]; then
+            if [ -z "${DEPENDENCY_SERVICE}" ] || [ -z "${DEPENDENCY_ENV}" ]; then
+              echo "ERROR: dependency_service_name and dependency_env_name must be provided together"
               exit 1
             fi
-            echo "pf-rates URL: ${PF_RATES_URL}"
-            ENV_VARS_ARG="${ENV_VARS_ARG},PF_RATES_URL=${PF_RATES_URL}"
+            echo "Resolving dependency Cloud Run URL for ${DEPENDENCY_SERVICE}..."
+            DEPENDENCY_URL=$(gcloud run services describe "${DEPENDENCY_SERVICE}" \
+              --region="${{ env.REGION }}" --format="value(status.url)")
+            if [ -z "${DEPENDENCY_URL}" ]; then
+              echo "ERROR: could not resolve dependency service URL"
+              exit 1
+            fi
+            echo "Resolved dependency URL for ${DEPENDENCY_SERVICE}"
+            ENV_VARS_ARG="${ENV_VARS_ARG},${DEPENDENCY_ENV}=${DEPENDENCY_URL}"
           fi
 
           # Build gcloud command with optional Cloud SQL instance
@@ -664,20 +689,20 @@ jobs:
           echo "Health check failed after 10 attempts against ${URL}"
           exit 1
 
-      - name: Verify protected payroll endpoint
-        if: inputs.repo_name == 'pf-payroll'
+      - name: Verify protected endpoint
+        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
         run: |
           set -euo pipefail
-          API_KEY=$(gcloud secrets versions access latest --secret=PF_PAYROLL_API_KEY)
+          API_KEY=$(gcloud secrets versions access latest --secret="${{ inputs.protected_smoke_secret_name }}")
           status=$(curl --silent --show-error --max-time 30 \
             --output /dev/null \
             --write-out '%{http_code}' \
             --header "X-API-Key: ${API_KEY}" \
-            "${{ needs.deploy.outputs.service_url }}/payroll/employers")
+            "${{ needs.deploy.outputs.service_url }}${{ inputs.protected_smoke_path }}")
           unset API_KEY
           case "${status}" in
-            2??) echo "Protected payroll endpoint returned ${status}" ;;
-            *) echo "ERROR: protected payroll endpoint returned ${status}"; exit 1 ;;
+            2??) echo "Protected endpoint returned ${status}" ;;
+            *) echo "ERROR: protected endpoint returned ${status}"; exit 1 ;;
           esac
 
   # ----------------------------------------------------------------------------
