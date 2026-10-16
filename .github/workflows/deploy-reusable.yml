@@ -303,6 +303,7 @@ jobs:
     environment: GCP
     outputs:
       service_url: ${{ steps.deployed-url.outputs.url }}
+      revision_name: ${{ steps.deploy.outputs.revision_name }}
 
     steps:
       - name: Checkout pf-common for composite actions
@@ -448,6 +449,7 @@ jobs:
       # Secret names follow convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
       # e.g., pf-rates → PF_RATES_API_KEY, pf-payroll → PF_PAYROLL_API_KEY
       - name: Deploy to Cloud Run
+        id: deploy
         run: |
           set -eo pipefail
           IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
@@ -524,6 +526,28 @@ jobs:
           echo "Executing: ${GCLOUD_CMD}"
           eval "${GCLOUD_CMD}"
 
+          REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+            --region="${{ env.REGION }}" \
+            --format="value(status.latestReadyRevisionName)")
+          if [ -z "${REVISION}" ]; then
+            echo "ERROR: Cloud Run returned no ready revision"
+            exit 1
+          fi
+          echo "Deploy revision: ${REVISION}"
+          gcloud run services update-traffic "${{ env.SERVICE_NAME }}" \
+            --region="${{ env.REGION }}" \
+            --to-revisions="${REVISION}=100" \
+            --quiet
+          TRAFFIC_REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+            --region="${{ env.REGION }}" \
+            --format="value(status.traffic[0].revisionName)")
+          if [ "${TRAFFIC_REVISION}" != "${REVISION}" ]; then
+            echo "ERROR: traffic is on ${TRAFFIC_REVISION}, expected ${REVISION}"
+            exit 1
+          fi
+          echo "Verified 100% traffic on ${REVISION}"
+          echo "revision_name=${REVISION}" >> "$GITHUB_OUTPUT"
+
       - name: Print deployed service URL
         id: deployed-url
         run: |
@@ -560,6 +584,30 @@ jobs:
       needs.deploy.result == 'success'
 
     steps:
+      - name: Checkout pf-common for composite actions
+        uses: actions/checkout@v7
+        with:
+          repository: mrturo-pf/pf-common
+          path: .pf-common
+
+      - name: Authenticate to GCP for traffic and protected smoke checks
+        uses: ./.pf-common/.github/actions/gcp-auth
+        with:
+          workload_identity_provider: ${{ inputs.workload_identity_provider }}
+          service_account: ${{ inputs.deployer_service_account }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Verify traffic is on the deployed revision
+        env:
+          EXPECTED_REVISION: ${{ needs.deploy.outputs.revision_name }}
+        run: |
+          set -euo pipefail
+          ACTUAL_REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+            --region="${{ env.REGION }}" \
+            --format="value(status.traffic[0].revisionName)")
+          test "${ACTUAL_REVISION}" = "${EXPECTED_REVISION}"
+          echo "Traffic verified on ${ACTUAL_REVISION}"
+
       - name: Verify /health reports ok, the right service, and a fresh uptime
         run: |
           set -euo pipefail
@@ -615,6 +663,22 @@ jobs:
 
           echo "Health check failed after 10 attempts against ${URL}"
           exit 1
+
+      - name: Verify protected payroll endpoint
+        if: inputs.repo_name == 'pf-payroll'
+        run: |
+          set -euo pipefail
+          API_KEY=$(gcloud secrets versions access latest --secret=PF_PAYROLL_API_KEY)
+          status=$(curl --silent --show-error --max-time 30 \
+            --output /dev/null \
+            --write-out '%{http_code}' \
+            --header "X-API-Key: ${API_KEY}" \
+            "${{ needs.deploy.outputs.service_url }}/payroll/employers")
+          unset API_KEY
+          case "${status}" in
+            2??) echo "Protected payroll endpoint returned ${status}" ;;
+            *) echo "ERROR: protected payroll endpoint returned ${status}"; exit 1 ;;
+          esac
 
   # ----------------------------------------------------------------------------
   # notify-failure: email alert when any job fails on push to main
