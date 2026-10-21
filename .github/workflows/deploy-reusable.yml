@@ -340,6 +340,7 @@ jobs:
       - name: Authenticate to GCP
         uses: ./.pf-common/.github/actions/gcp-auth
         with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
           workload_identity_provider: ${{ inputs.workload_identity_provider }}
           service_account: ${{ inputs.deployer_service_account }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
@@ -618,6 +619,7 @@ jobs:
       - name: Authenticate to GCP for traffic and protected smoke checks
         uses: ./.pf-common/.github/actions/gcp-auth
         with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
           workload_identity_provider: ${{ inputs.workload_identity_provider }}
           service_account: ${{ inputs.deployer_service_account }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
