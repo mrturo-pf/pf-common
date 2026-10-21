@@ -584,13 +584,44 @@ jobs:
           echo "Executing: ${GCLOUD_CMD}"
           eval "${GCLOUD_CMD}"
 
-          REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
-            --region="${{ env.REGION }}" \
-            --format="value(status.latestReadyRevisionName)")
+          REVISION=""
+          for attempt in $(seq 1 30); do
+            REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+              --region="${{ env.REGION }}" \
+              --format="value(status.latestCreatedRevisionName)")
+            if [ -n "${REVISION}" ]; then
+              break
+            fi
+            echo "Waiting for Cloud Run to report the created revision (attempt ${attempt}/30)..."
+            sleep 2
+          done
           if [ -z "${REVISION}" ]; then
-            echo "ERROR: Cloud Run returned no ready revision"
+            echo "ERROR: Cloud Run returned no created revision"
             exit 1
           fi
+
+          for attempt in $(seq 1 30); do
+            READY=$(gcloud run revisions describe "${REVISION}" \
+              --region="${{ env.REGION }}" --format=json | \
+              python3 -c '
+          import json
+          import sys
+
+          conditions = json.load(sys.stdin).get("status", {}).get("conditions", [])
+          ready = next((item.get("status") for item in conditions if item.get("type") == "Ready"), "")
+          print(ready)
+          ')
+            if [ "${READY}" = "True" ]; then
+              break
+            fi
+            echo "Waiting for ${REVISION} to become Ready (attempt ${attempt}/30, status=${READY:-unknown})..."
+            sleep 2
+          done
+          if [ "${READY}" != "True" ]; then
+            echo "ERROR: revision ${REVISION} did not become Ready"
+            exit 1
+          fi
+
           echo "Deploy revision: ${REVISION}"
           gcloud run services update-traffic "${{ env.SERVICE_NAME }}" \
             --region="${{ env.REGION }}" \
