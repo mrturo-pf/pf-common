@@ -381,7 +381,11 @@ jobs:
           # Extract service name without 'pf-' prefix (pf-rates -> RATES)
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
-          API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
+          if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
+            API_KEY_SECRET="PF_INCOME_API_KEY"
+          else
+            API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
+          fi
           
           MISSING_SECRETS=()
           
@@ -512,7 +516,11 @@ jobs:
           # Extract the service name without 'pf-' prefix (pf-rates -> RATES, pf-payroll -> PAYROLL)
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
-          API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
+          if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
+            API_KEY_SECRET="PF_INCOME_API_KEY"
+          else
+            API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
+          fi
           SECRETS_ARG="PF_DATABASE_URL=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
           # Optional: PF_RATES_API_KEY for pf-payroll (calling pf-rates)
