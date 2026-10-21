@@ -583,6 +583,24 @@ jobs:
           echo "${URL}"
           echo "url=${URL}" >> "$GITHUB_OUTPUT"
 
+      # Run protected smoke checks in the already-authenticated deploy job.
+      # The separate public-health job must not perform a second WIF exchange.
+      - name: Verify protected endpoint
+        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
+        run: |
+          set -euo pipefail
+          API_KEY=$(gcloud secrets versions access latest --secret="${{ inputs.protected_smoke_secret_name }}")
+          status=$(curl --silent --show-error --max-time 30 \\
+            --output /dev/null \\
+            --write-out '%{http_code}' \\
+            --header "X-API-Key: ${API_KEY}" \\
+            "${{ steps.deployed-url.outputs.url }}${{ inputs.protected_smoke_path }}")
+          unset API_KEY
+          case "${status}" in
+            2??) echo "Protected endpoint returned ${status}" ;;
+            *) echo "ERROR: protected endpoint returned ${status}"; exit 1 ;;
+          esac
+
   # ----------------------------------------------------------------------------
   # smoke-test: verify the freshly deployed revision is actually serving
   # correct traffic — 'gcloud run deploy' only waits for the container to
@@ -670,38 +688,6 @@ jobs:
 
           echo "Health check failed after 10 attempts against ${URL}"
           exit 1
-
-      - name: Checkout pf-common for protected smoke authentication
-        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
-        uses: actions/checkout@v7
-        with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
-
-      - name: Authenticate to GCP for protected smoke checks
-        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
-        uses: ./.pf-common/.github/actions/gcp-auth
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-          workload_identity_provider: ${{ inputs.workload_identity_provider }}
-          service_account: ${{ inputs.deployer_service_account }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Verify protected endpoint
-        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
-        run: |
-          set -euo pipefail
-          API_KEY=$(gcloud secrets versions access latest --secret="${{ inputs.protected_smoke_secret_name }}")
-          status=$(curl --silent --show-error --max-time 30 \
-            --output /dev/null \
-            --write-out '%{http_code}' \
-            --header "X-API-Key: ${API_KEY}" \
-            "${{ needs.deploy.outputs.service_url }}${{ inputs.protected_smoke_path }}")
-          unset API_KEY
-          case "${status}" in
-            2??) echo "Protected endpoint returned ${status}" ;;
-            *) echo "ERROR: protected endpoint returned ${status}"; exit 1 ;;
-          esac
 
   # ----------------------------------------------------------------------------
   # notify-failure: email alert when any job fails on push to main
