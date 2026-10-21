@@ -590,11 +590,7 @@ jobs:
         run: |
           set -euo pipefail
           API_KEY=$(gcloud secrets versions access latest --secret="${{ inputs.protected_smoke_secret_name }}")
-          status=$(curl --silent --show-error --max-time 30 \\
-            --output /dev/null \\
-            --write-out '%{http_code}' \\
-            --header "X-API-Key: ${API_KEY}" \\
-            "${{ steps.deployed-url.outputs.url }}${{ inputs.protected_smoke_path }}")
+          status=$(curl --silent --show-error --max-time 30 --output /dev/null --write-out '%{http_code}' --header "X-API-Key: ${API_KEY}" "${{ steps.deployed-url.outputs.url }}${{ inputs.protected_smoke_path }}")
           unset API_KEY
           case "${status}" in
             2??) echo "Protected endpoint returned ${status}" ;;
