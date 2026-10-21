@@ -610,30 +610,10 @@ jobs:
       needs.deploy.result == 'success'
 
     steps:
-      - name: Checkout pf-common for composite actions
-        uses: actions/checkout@v7
-        with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
-
-      - name: Authenticate to GCP for traffic and protected smoke checks
-        uses: ./.pf-common/.github/actions/gcp-auth
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-          workload_identity_provider: ${{ inputs.workload_identity_provider }}
-          service_account: ${{ inputs.deployer_service_account }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
-      - name: Verify traffic is on the deployed revision
-        env:
-          EXPECTED_REVISION: ${{ needs.deploy.outputs.revision_name }}
-        run: |
-          set -euo pipefail
-          ACTUAL_REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
-            --region="${{ env.REGION }}" \
-            --format="value(status.traffic[0].revisionName)")
-          test "${ACTUAL_REVISION}" = "${EXPECTED_REVISION}"
-          echo "Traffic verified on ${ACTUAL_REVISION}"
+      # The deploy job already pins 100% of traffic to the new revision and
+      # verifies that assignment before exposing its service URL. The smoke
+      # test therefore only needs the public health endpoint; authenticating
+      # a second time here would add an unnecessary WIF failure point.
 
       - name: Verify /health reports ok, the right service, and a fresh uptime
         run: |
@@ -690,6 +670,22 @@ jobs:
 
           echo "Health check failed after 10 attempts against ${URL}"
           exit 1
+
+      - name: Checkout pf-common for protected smoke authentication
+        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
+        uses: actions/checkout@v7
+        with:
+          repository: mrturo-pf/pf-common
+          path: .pf-common
+
+      - name: Authenticate to GCP for protected smoke checks
+        if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
+        uses: ./.pf-common/.github/actions/gcp-auth
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: ${{ inputs.workload_identity_provider }}
+          service_account: ${{ inputs.deployer_service_account }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Verify protected endpoint
         if: inputs.protected_smoke_path != '' && inputs.protected_smoke_secret_name != ''
