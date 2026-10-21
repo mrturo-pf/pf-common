@@ -495,7 +495,16 @@ jobs:
         id: deploy
         run: |
           set -eo pipefail
-          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.SERVICE_NAME }}:${{ github.sha }}"
+          IMAGE_REPOSITORY="${{ env.REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.AR_REPO }}/${{ env.SERVICE_NAME }}"
+          IMAGE_TAG="${IMAGE_REPOSITORY}:${{ github.sha }}"
+          IMAGE_DIGEST="$(gcloud artifacts docker images describe "${IMAGE_TAG}" \
+            --format='value(image_summary.digest)')"
+          if [ -z "${IMAGE_DIGEST}" ]; then
+            echo "ERROR: Artifact Registry returned no image digest for ${IMAGE_TAG}"
+            exit 1
+          fi
+          IMAGE="${IMAGE_REPOSITORY}@${IMAGE_DIGEST}"
+          echo "Deploying immutable image: ${IMAGE}"
           
           # Secret Manager secrets
           # Always include PF_DATABASE_URL
