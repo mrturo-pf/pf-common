@@ -399,8 +399,8 @@ jobs:
             MISSING_SECRETS+=("${API_KEY_SECRET}")
           fi
           
-          # For pf-payroll, also check PF_RATES_API_KEY
-          if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
+          # Services that call pf-rates must have PF_RATES_API_KEY.
+          if [ "${{ inputs.repo_name }}" = "pf-payroll" ] || [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             if ! gcloud secrets describe PF_RATES_API_KEY --quiet > /dev/null 2>&1; then
               MISSING_SECRETS+=("PF_RATES_API_KEY")
             fi
@@ -523,8 +523,8 @@ jobs:
           fi
           SECRETS_ARG="PF_DATABASE_URL=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
-          # Optional: PF_RATES_API_KEY for pf-payroll (calling pf-rates)
-          if [ "${{ inputs.repo_name }}" = "pf-payroll" ]; then
+          # PF_RATES_API_KEY for services calling pf-rates.
+          if [ "${{ inputs.repo_name }}" = "pf-payroll" ] || [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             SECRETS_ARG="${SECRETS_ARG},PF_RATES_API_KEY=PF_RATES_API_KEY:latest"
           fi
 
