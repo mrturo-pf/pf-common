@@ -112,7 +112,7 @@ Every per-service `env-write` target (and the shared `pf_corporate_tooling_env_b
 helper it calls into) accepts overrides as **`make` command-line arguments**, e.g.:
 
 ```bash
-make PF_PAYROLL_API_KEY="$(openssl rand -hex 32)" \
+make PF_INCOME_API_KEY="$(openssl rand -hex 32)" \
      CORPORATIVE_PIP_INDEX="https://..." \
      env-write
 ```
@@ -160,6 +160,6 @@ No manual configuration needed.
 ## Examples
 
 See:
-- `../../pf-payroll/Makefile` - Full example with CLI, PDF generation
+- `../../pf-svc-income/Makefile` - Full example with CLI, PDF generation
 - `../../pf-rates/Makefile` - Minimal example
 - `templates/service.mk` - Template for new services

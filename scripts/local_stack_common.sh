@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Shared helpers for the per-service "start everything locally" entrypoint
-# (scripts/local_stack.sh in pf-rates/pf-payroll, wired to `make local-up`).
+# (scripts/local_stack.sh in pf-rates/pf-svc-income, wired to `make local-up`).
 #
 # Each service keeps its own local_stack.sh -- only the parts that were
 # byte-for-byte identical across services (or should be, but had drifted)

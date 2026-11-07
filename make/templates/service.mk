@@ -10,7 +10,7 @@
 #   2. Replace [SERVICE_DESCRIPTION] with brief description
 #   3. Set APP_PORT to a free port (8000, 8001, 8002, ...)
 #   4. Set APP_MODULE to your FastAPI app module path
-#   5. Create scripts/write_env.sh (copy the pattern from pf-payroll or
+#   5. Create scripts/write_env.sh (copy the pattern from pf-svc-income or
 #      pf-rates: source ../../pf-common/scripts/write_env_common.sh, print
 #      the service-specific lines, then call pf_corporate_tooling_env_block)
 #   6. Add custom targets if needed
@@ -39,7 +39,7 @@ include ../pf-common/make/common.mk
 # ============================================================================
 
 # scripts/write_env.sh should source ../pf-common/scripts/write_env_common.sh
-# and call pf_corporate_tooling_env_block at the end -- see pf-payroll/pf-rates
+# and call pf_corporate_tooling_env_block at the end -- see pf-svc-income/pf-rates
 # for the reference implementation. Its CORPORATIVE_* defaults are generic
 # placeholder URLs (no real hostname committed), so you only need to pass
 # through service-specific vars (PF_DATABASE_URL, [SERVICE_NAME]_API_KEY, ...).

@@ -7,7 +7,7 @@ This repository contains shared infrastructure, scripts, and configurations used
 pf-common provides reusable Make targets, validation scripts, and templates for FastAPI microservices in the PF ecosystem.
 
 **Services using pf-common:**
-- [pf-payroll](https://github.com/mrturo-pf/pf-payroll) - Chilean payroll microservice
+- [pf-svc-income](https://github.com/mrturo-pf/pf-svc-income) - Chilean payroll microservice
 - [pf-rates](https://github.com/mrturo-pf/pf-rates) - Financial reference data microservice
 - Future services...
 
@@ -41,7 +41,7 @@ Shared Makefile infrastructure for FastAPI microservices:
 - **common.mk** - Shared targets (install, test, lint, check, etc.)
 - **templates/** - Makefile templates for new services
 
-**Used by:** pf-payroll, pf-rates, and future FastAPI services  
+**Used by:** pf-svc-income, pf-rates, and future FastAPI services
 **NOT used by:** pf-db (different type of repo)
 
 See [make/README.md](make/README.md) for detailed usage.
@@ -150,7 +150,7 @@ python scripts/sync_deps.py
 4. **Well-documented** - Clear usage guides and examples
 5. **Versioned** - Changes tracked via git history
 6. **Cloud cost is always the priority** - the shared `deploy-reusable.yml` pipeline
-   (consumed by pf-rates and pf-payroll) must default every infra knob to the cheapest
+   (consumed by pf-rates and pf-svc-income) must default every infra knob to the cheapest
    viable option: scale-to-zero (`--min-instances=0`), free scanning (Trivy) over paid
    Artifact Registry scanning, on-demand jobs over always-on services. Any change here
    affects cost for every consuming service at once - evaluate the cost delta first.
@@ -160,6 +160,14 @@ python scripts/sync_deps.py
 Use TDD for behavioral changes to shared infrastructure. Define executable tests or validation checks before implementation, especially for shared Make targets and scripts. Use ATDD or contract tests for behavior consumed by multiple repositories, and verify every affected service. Use BDD scenarios only when they clarify shared business behavior.
 
 Documentation-only, formatting-only, and mechanical refactor changes do not require new tests, but all applicable validation commands must still run.
+
+## Legacy rollback compatibility
+
+The reusable workflows retain explicit `pf-svc-income` branches only for the
+HIST-007 rollback window. `pf-svc-income` is the active service identity and
+uses `PF_INCOME_API_KEY`; the legacy `PF_INCOME_API_KEY` path must not be
+used for new deployments. Remove those legacy branches after the rollback
+window is closed and its evidence is recorded.
 
 ## Maintenance Guidelines
 

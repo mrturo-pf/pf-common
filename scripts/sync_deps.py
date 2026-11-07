@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate that core dependencies are synchronized between pf-payroll and pf-rates.
+"""Validate that core dependencies are synchronized between pf-svc-income and pf-rates.
 
 This script ensures that critical shared dependencies (FastAPI, SQLAlchemy, pytest, etc.)
 are at the same minimum version across all FastAPI microservices in the PF ecosystem.
@@ -69,41 +69,41 @@ def main() -> int:
     """Main entry point."""
     # Paths to pyproject.toml files
     repo_root = Path(__file__).parent.parent.parent
-    payroll_toml = repo_root / "pf-payroll" / "pyproject.toml"
+    income_toml = repo_root / "pf-svc-income" / "pyproject.toml"
     rates_toml = repo_root / "pf-rates" / "pyproject.toml"
 
     # Check files exist
-    if not payroll_toml.exists():
-        print(f"ERROR: {payroll_toml} not found")
+    if not income_toml.exists():
+        print(f"ERROR: {income_toml} not found")
         return 1
     if not rates_toml.exists():
         print(f"ERROR: {rates_toml} not found")
         return 1
 
     # Extract dependencies
-    payroll_deps = extract_deps(payroll_toml)
+    income_deps = extract_deps(income_toml)
     rates_deps = extract_deps(rates_toml)
 
     # Find mismatches
     mismatches = []
     for dep in sorted(CORE_DEPS):
-        payroll_ver = payroll_deps.get(dep)
+        income_ver = income_deps.get(dep)
         rates_ver = rates_deps.get(dep)
 
-        if payroll_ver != rates_ver:
+        if income_ver != rates_ver:
             # At least one has it defined, but they differ
-            if payroll_ver or rates_ver:
+            if income_ver or rates_ver:
                 mismatches.append(
-                    (dep, payroll_ver or "MISSING", rates_ver or "MISSING")
+                    (dep, income_ver or "MISSING", rates_ver or "MISSING")
                 )
 
     # Report results
     if mismatches:
-        print("ERROR: Core dependencies differ between pf-payroll and pf-rates:")
+        print("ERROR: Core dependencies differ between pf-svc-income and pf-rates:")
         print()
-        for dep, payroll_ver, rates_ver in mismatches:
+        for dep, income_ver, rates_ver in mismatches:
             print(f"  {dep}:")
-            print(f"    pf-payroll: {payroll_ver}")
+            print(f"    pf-svc-income: {income_ver}")
             print(f"    pf-rates:   {rates_ver}")
         print()
         print(
@@ -112,7 +112,7 @@ def main() -> int:
         return 1
     else:
         print(
-            f"All {len(CORE_DEPS)} core dependencies are synchronized between pf-payroll and pf-rates"
+            f"All {len(CORE_DEPS)} core dependencies are synchronized between pf-svc-income and pf-rates"
         )
         return 0
 
