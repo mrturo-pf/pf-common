@@ -15,7 +15,7 @@
 #   APP_MODULE        - Python module path (e.g., payroll.interfaces.api.main:app)
 #
 # OPTIONAL VARIABLES (override AFTER include if needed):
-#   PYTHON            - Python interpreter (default: python3.12)
+#   PYTHON            - Python 3.12 interpreter (default: python3.12)
 #   VENV              - Virtual environment path (default: .venv)
 #   ENV_FILE          - Environment file (default: .env)
 #
@@ -55,8 +55,9 @@ endif
 # Variables
 # ============================================================================
 
-# Python configuration
-PYTHON ?= python3.12
+# Python configuration. PF services are tested and supported on Python 3.12.
+# A caller can still explicitly override PYTHON when validating another runtime.
+PYTHON := python3.12
 VENV ?= .venv
 ENV_FILE ?= .env
 VENV_BIN = PATH="$(VENV)/bin:$$PATH"
@@ -79,39 +80,40 @@ UNSET_PROXY_VARS = bash -eu -o pipefail -c 'vars=(http_proxy https_proxy all_pro
 
 .PHONY: install
 install: ## Create venv, install dependencies, configure git hooks
-	@python_bin=$$(for v in python3.14 python3.13 python3.12 python3; do \
-		if command -v "$$v" >/dev/null 2>&1 && "$$v" -c "import sys; sys.exit(0 if sys.version_info>=(3,12) else 1)" 2>/dev/null; then \
-			echo "$$v"; break; \
-		fi; \
-	done); \
-	[ -n "$$python_bin" ] || { \
-		echo ""; \
-		echo "ERROR: Python >=3.12 not found in PATH."; \
-		echo ""; \
-		echo "  Option 1 — pyenv (recommended if already installed):"; \
-		echo "    pyenv install 3.12 && pyenv local 3.12"; \
-		echo ""; \
-		echo "  Option 2 — install pyenv without brew (works on Corporative VPN):"; \
-		echo "    curl -fsSL https://pyenv.run | bash"; \
-		echo "    # then add to your shell profile and restart terminal"; \
-		echo "    pyenv install 3.12 && pyenv local 3.12"; \
-		echo ""; \
-		echo "  Option 3 — download installer from https://www.python.org/downloads/"; \
-		echo ""; \
-		echo "  Then re-run: make reinstall"; \
-		echo ""; \
-		exit 1; \
-	}; \
-	echo "  -> Using $$python_bin ($$($$python_bin --version))"; \
-	"$$python_bin" -m venv "$(VENV)"
-	@if curl -sfL --connect-timeout 3 --max-time 5 -o /dev/null "$(CORPORATIVE_PIP_INDEX)/" 2>/dev/null; then \
-		echo "  -> Corporative VPN — routing pip through sysproxy"; \
+	@if command -v uv >/dev/null 2>&1; then \
+		echo "  -> Creating venv with uv (Python $(PYTHON))"; \
+		uv venv --python "$(PYTHON)" --clear "$(VENV)"; \
+	else \
+		python_bin=$$(command -v "$(PYTHON)" 2>/dev/null || true); \
+		[ -n "$$python_bin" ] || { \
+			echo "ERROR: $(PYTHON) not found in PATH. Python 3.12 is required."; \
+			echo "Install Python 3.12 or install uv, then retry make install."; \
+			exit 1; \
+		}; \
+		"$$python_bin" -c 'import sys; assert sys.version_info >= (3, 12), "Python 3.12 or newer is required"' || exit 1; \
+		echo "  -> Using $$python_bin ($$($$python_bin --version))"; \
+		"$$python_bin" -m venv "$(VENV)"; \
+	fi
+	@if [ -n "$(CORPORATIVE_PIP_INDEX)" ]; then \
+		echo "  -> Corporate package index configured"; \
 		printf '[global]\\nproxy = $(CORPORATIVE_PROXY)\\n' > "$(VENV)/pip.conf"; \
 	else \
-		echo "  -> No VPN — disabling corporate proxy env vars for pip"; \
+		echo "  -> No corporate package index configured"; \
 		printf '[global]\\ntrust-env = false\\n' > "$(VENV)/pip.conf"; \
 	fi
-	. "$(VENV)/bin/activate" && python -m pip install -U pip && python -m pip install -e ".[dev]"
+	@if command -v uv >/dev/null 2>&1; then \
+		if [ -n "$(CORPORATIVE_PIP_INDEX)" ]; then \
+			echo "  -> Installing with uv through the corporate index"; \
+			UV_NATIVE_TLS=true uv pip install --python "$(VENV)/bin/python" -e ".[dev]" \
+				--index-url "$(CORPORATIVE_PIP_INDEX)" \
+				--allow-insecure-host "$$(printf '%s' "$(CORPORATIVE_PIP_INDEX)" | sed -E 's#https?://([^/]+)/.*#\1#')"; \
+		else \
+			echo "  -> Installing with uv defaults"; \
+			UV_NATIVE_TLS=true uv pip install --python "$(VENV)/bin/python" -e ".[dev]"; \
+		fi; \
+	else \
+		"$(VENV)/bin/python" -m pip install -U pip && "$(VENV)/bin/python" -m pip install -e ".[dev]"; \
+	fi
 	git config core.hooksPath .githooks
 	@echo "  Git hooks configured (.githooks/)"
 
@@ -120,8 +122,10 @@ reinstall: clean ## Wipe caches and reinstall from scratch
 	rm -rf $(VENV)
 	@$(MAKE) --no-print-directory install
 
-.PHONY: clean
-clean: ## Remove build artifacts and caches
+.PHONY: clean clean-common
+clean: clean-common ## Remove build artifacts and caches
+
+clean-common:
 	rm -rf .coverage htmlcov .pytest_cache .mypy_cache .ruff_cache build dist
 	rm -f .coverage.* .dmypy.json dmypy.json
 	find . -type d -name __pycache__ -prune -exec rm -rf {} +
