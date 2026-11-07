@@ -283,7 +283,7 @@ jobs:
               docker run --rm --entrypoint sh "${IMAGE_NAME}" -c '
                 grep -q '\''__tablename__ = "INC_EMPLOYER"'\'' \
                   /opt/venv/lib/python3.12/site-packages/payroll/infrastructure/db/models/payroll.py
-                ! grep -q '\''__tablename__ = "INC_EMPLOYER"'\'' \
+                grep -q '\''__tablename__ = "INC_PAYROLL"'\'' \
                   /opt/venv/lib/python3.12/site-packages/payroll/infrastructure/db/models/payroll.py
               '
               ;;
