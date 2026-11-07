@@ -133,10 +133,16 @@ jobs:
             fi
           }
           
-          # PF_DATABASE_URL (shared by all services)
+          # Database secrets: pf-svc-income uses a service-specific name;
+          # other services retain the shared default for compatibility.
           create_secret_if_missing \
             "PF_DATABASE_URL" \
             "postgresql+asyncpg://user:pass@/pf_db?host=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:pf-db"
+          if [ "${{ inputs.service_name }}" = "pf-svc-income" ] || [ "${{ inputs.service_name }}" = "all" ]; then
+            create_secret_if_missing \
+              "PF_SVC_INCOME_DATABASE_URL" \
+              "postgresql+asyncpg://user:pass@/pf_db?host=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:pf-db"
+          fi
           
           # Service-specific API keys
           if [ "${{ inputs.service_name }}" = "pf-rates" ] || [ "${{ inputs.service_name }}" = "all" ]; then
@@ -166,11 +172,15 @@ jobs:
             
             echo "Granting ${SA} access to secrets..."
             
-            # Grant access to PF_DATABASE_URL (all services need this)
-            gcloud secrets add-iam-policy-binding PF_DATABASE_URL \
+            # Grant access to the service's database secret.
+            DATABASE_SECRET_NAME="PF_DATABASE_URL"
+            if [ "${SERVICE}" = "pf-svc-income" ]; then
+              DATABASE_SECRET_NAME="PF_SVC_INCOME_DATABASE_URL"
+            fi
+            gcloud secrets add-iam-policy-binding "${DATABASE_SECRET_NAME}" \
               --member="serviceAccount:${SA}" \
               --role="roles/secretmanager.secretAccessor" \
-              --quiet || echo "  Could not grant ${SA} access to PF_DATABASE_URL"
+              --quiet || echo "  Could not grant ${SA} access to ${DATABASE_SECRET_NAME}"
             
             # Grant service-specific secret access
             if [ "${SERVICE}" = "pf-rates" ]; then
