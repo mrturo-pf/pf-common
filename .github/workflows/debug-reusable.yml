@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       repo_name:
-        description: 'Repository name (pf-rates, pf-payroll)'
+        description: 'Repository name (pf-rates, pf-svc-income)'
         required: true
         type: string
 

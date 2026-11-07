@@ -8,7 +8,7 @@
 # genuinely running. pf-db/Makefile already solves this for its own
 # `docker compose`/build usage by preferring nerdctl when available; this
 # script gives the same detection to plain bash scripts (like
-# scripts/local_stack.sh in pf-rates/pf-payroll) that only need to check
+# scripts/local_stack.sh in pf-rates/pf-svc-income) that only need to check
 # "is container X running?", not manage containers themselves.
 #
 # Usage:

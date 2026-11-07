@@ -60,7 +60,7 @@ on:
   workflow_call:
     inputs:
       repo_name:
-        description: 'Repository name (pf-rates, pf-payroll, etc.)'
+        description: 'Repository name (pf-rates, pf-svc-income)'
         required: true
         type: string
       # Deprecated compatibility input. It is intentionally ignored; merges to
@@ -279,11 +279,11 @@ jobs:
         run: |
           set -euo pipefail
           case "${{ inputs.repo_name }}" in
-            pf-payroll)
+            pf-svc-income)
               docker run --rm --entrypoint sh "${IMAGE_NAME}" -c '
                 grep -q '\''__tablename__ = "INC_EMPLOYER"'\'' \
                   /opt/venv/lib/python3.12/site-packages/payroll/infrastructure/db/models/payroll.py
-                ! grep -q '\''__tablename__ = "PAY_EMPLOYER"'\'' \
+                ! grep -q '\''__tablename__ = "INC_EMPLOYER"'\'' \
                   /opt/venv/lib/python3.12/site-packages/payroll/infrastructure/db/models/payroll.py
               '
               ;;
@@ -400,7 +400,7 @@ jobs:
           fi
           
           # Services that call pf-rates must have PF_RATES_API_KEY.
-          if [ "${{ inputs.repo_name }}" = "pf-payroll" ] || [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
+          if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             if ! gcloud secrets describe PF_RATES_API_KEY --quiet > /dev/null 2>&1; then
               MISSING_SECRETS+=("PF_RATES_API_KEY")
             fi
@@ -494,7 +494,7 @@ jobs:
 
       # Deploy the new service revision.
       # Secret names follow convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
-      # e.g., pf-rates → PF_RATES_API_KEY, pf-payroll → PF_PAYROLL_API_KEY
+      # e.g., pf-rates → PF_RATES_API_KEY, pf-svc-income → PF_INCOME_API_KEY
       - name: Deploy to Cloud Run
         id: deploy
         run: |
@@ -513,7 +513,7 @@ jobs:
           # Secret Manager secrets
           # Always include PF_DATABASE_URL
           # API key follows naming convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
-          # Extract the service name without 'pf-' prefix (pf-rates -> RATES, pf-payroll -> PAYROLL)
+          # Extract the service name without 'pf-' prefix (pf-rates -> RATES, pf-svc-income -> SVC_INCOME)
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
@@ -524,7 +524,7 @@ jobs:
           SECRETS_ARG="PF_DATABASE_URL=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
           # PF_RATES_API_KEY for services calling pf-rates.
-          if [ "${{ inputs.repo_name }}" = "pf-payroll" ] || [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
+          if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             SECRETS_ARG="${SECRETS_ARG},PF_RATES_API_KEY=PF_RATES_API_KEY:latest"
           fi
 

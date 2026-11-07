@@ -3,7 +3,7 @@
 # ==============================================================================
 #
 # This workflow creates all required GCP resources for deploying PF services:
-#   - Secret Manager secrets (PF_DATABASE_URL, PF_*_API_KEY)
+#   - Secret Manager secrets (PF_DATABASE_URL, PF_RATES_API_KEY, PF_INCOME_API_KEY)
 #   - Artifact Registry repositories
 #   - Service Account IAM permissions
 #
@@ -22,7 +22,7 @@ on:
   workflow_call:
     inputs:
       service_name:
-        description: 'Service to setup (pf-rates, pf-payroll, pf-db)'
+        description: 'Service to setup (pf-rates, pf-svc-income, pf-db)'
         required: true
         type: string
       create_secrets:
@@ -83,7 +83,7 @@ jobs:
           
           SERVICES=()
           if [ "${{ inputs.service_name }}" = "all" ]; then
-            SERVICES=("pf-rates" "pf-payroll" "pf-db")
+            SERVICES=("pf-rates" "pf-svc-income" "pf-db")
           else
             SERVICES=("${{ inputs.service_name }}")
           fi
@@ -143,9 +143,9 @@ jobs:
             create_secret_if_missing "PF_RATES_API_KEY" "$(openssl rand -hex 32)"
           fi
           
-          if [ "${{ inputs.service_name }}" = "pf-payroll" ] || [ "${{ inputs.service_name }}" = "all" ]; then
-            create_secret_if_missing "PF_PAYROLL_API_KEY" "$(openssl rand -hex 32)"
-            # pf-payroll also needs PF_RATES_API_KEY to call pf-rates
+          if [ "${{ inputs.service_name }}" = "pf-svc-income" ] || [ "${{ inputs.service_name }}" = "all" ]; then
+            create_secret_if_missing "PF_INCOME_API_KEY" "$(openssl rand -hex 32)"
+            # pf-svc-income also needs PF_RATES_API_KEY to call pf-rates
             create_secret_if_missing "PF_RATES_API_KEY" "$(openssl rand -hex 32)"
           fi
 
@@ -156,7 +156,7 @@ jobs:
           
           SERVICES=()
           if [ "${{ inputs.service_name }}" = "all" ]; then
-            SERVICES=("pf-rates" "pf-payroll")
+            SERVICES=("pf-rates" "pf-svc-income")
           elif [ "${{ inputs.service_name }}" != "pf-db" ]; then
             SERVICES=("${{ inputs.service_name }}")
           fi
@@ -180,11 +180,11 @@ jobs:
                 --quiet || echo "  Could not grant access to PF_RATES_API_KEY"
             fi
             
-            if [ "${SERVICE}" = "pf-payroll" ]; then
-              gcloud secrets add-iam-policy-binding PF_PAYROLL_API_KEY \
+            if [ "${SERVICE}" = "pf-svc-income" ]; then
+              gcloud secrets add-iam-policy-binding PF_INCOME_API_KEY \
                 --member="serviceAccount:${SA}" \
                 --role="roles/secretmanager.secretAccessor" \
-                --quiet || echo "  Could not grant access to PF_PAYROLL_API_KEY"
+                --quiet || echo "  Could not grant access to PF_INCOME_API_KEY"
               gcloud secrets add-iam-policy-binding PF_RATES_API_KEY \
                 --member="serviceAccount:${SA}" \
                 --role="roles/secretmanager.secretAccessor" \
