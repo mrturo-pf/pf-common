@@ -601,19 +601,27 @@ jobs:
             echo "No Cloud SQL instance configured (optional)"
           fi
           
+          # Capture the current revision before deployment. Cloud Run can
+          # briefly return this stale value while the new revision is being
+          # created, so polling must wait for a different revision name.
+          PREVIOUS_REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+            --region="${{ env.REGION }}" \
+            --format="value(status.latestCreatedRevisionName)")
+
           # Execute deployment
           echo "Executing: ${GCLOUD_CMD}"
           eval "${GCLOUD_CMD}"
 
           REVISION=""
           for attempt in $(seq 1 30); do
-            REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
+            CANDIDATE_REVISION=$(gcloud run services describe "${{ env.SERVICE_NAME }}" \
               --region="${{ env.REGION }}" \
               --format="value(status.latestCreatedRevisionName)")
-            if [ -n "${REVISION}" ]; then
+            if [ -n "${CANDIDATE_REVISION}" ] && [ "${CANDIDATE_REVISION}" != "${PREVIOUS_REVISION}" ]; then
+              REVISION="${CANDIDATE_REVISION}"
               break
             fi
-            echo "Waiting for Cloud Run to report the created revision (attempt ${attempt}/30)..."
+            echo "Waiting for Cloud Run to report a new revision (attempt ${attempt}/30, current=${CANDIDATE_REVISION:-unknown})..."
             sleep 2
           done
           if [ -z "${REVISION}" ]; then
