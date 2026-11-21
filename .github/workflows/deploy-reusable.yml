@@ -289,7 +289,7 @@ jobs:
               ;;
             pf-rates)
               docker run --rm --entrypoint sh "${IMAGE_NAME}" -c '
-                grep -q '\''__tablename__ = "RAT_CURRENCY"'\'' \
+                grep -q '\''__tablename__ = "REF_RATE_UNIT"'\'' \
                   /opt/venv/lib/python3.12/site-packages/rates/infrastructure/db/models/financial_data.py
               '
               ;;
