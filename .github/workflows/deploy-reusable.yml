@@ -383,6 +383,8 @@ jobs:
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             API_KEY_SECRET="PF_INCOME_API_KEY"
+          elif [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+            API_KEY_SECRET="PF_REFERENCE_API_KEY"
           else
             API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           fi
@@ -518,10 +520,17 @@ jobs:
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             API_KEY_SECRET="PF_INCOME_API_KEY"
+          elif [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+            API_KEY_SECRET="PF_REFERENCE_API_KEY"
           else
             API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           fi
-          SECRETS_ARG="PF_DATABASE_URL=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
+          if [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+            DATABASE_ENV="PF_REFERENCE_DATABASE_URL"
+          else
+            DATABASE_ENV="PF_DATABASE_URL"
+          fi
+          SECRETS_ARG="${DATABASE_ENV}=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
           # PF_REFERENCE_API_KEY for services calling pf-rates.
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
