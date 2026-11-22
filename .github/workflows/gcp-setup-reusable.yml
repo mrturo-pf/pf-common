@@ -103,12 +103,25 @@ jobs:
               echo " Created ${SERVICE} repository"
             fi
             
-            # Ensure vulnerability scanning is DISABLED (saves ~$5/month)
+            # Ensure vulnerability scanning is DISABLED. Trivy is the per-build
+            # scanner; paid Artifact Analysis is intentionally not used.
             echo "Disabling vulnerability scanning for ${SERVICE}..."
             gcloud artifacts repositories update "${SERVICE}" \
               --location="${{ env.REGION }}" \
               --disable-vulnerability-scanning \
-              --quiet || echo "  Could not disable scanning (may not be enabled)"
+              --quiet
+            ENABLEMENT=$(gcloud artifacts repositories describe "${SERVICE}" \
+              --location="${{ env.REGION }}" \
+              --format="value(vulnerabilityScanningConfig.enablementConfig)")
+            STATE=$(gcloud artifacts repositories describe "${SERVICE}" \
+              --location="${{ env.REGION }}" \
+              --format="value(vulnerabilityScanningConfig.enablementState)")
+            echo "Vulnerability scanning config: ${ENABLEMENT:-unknown}"
+            echo "Vulnerability scanning state: ${STATE:-unknown}"
+            if [ "${ENABLEMENT}" != "DISABLED" ] || [ "${STATE}" != "SCANNING_DISABLED" ]; then
+              echo "ERROR: ${SERVICE} vulnerability scanning is not disabled" >&2
+              exit 1
+            fi
           done
 
       - name: Create Secret Manager secrets (placeholders)
