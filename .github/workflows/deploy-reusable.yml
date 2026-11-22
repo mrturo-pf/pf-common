@@ -27,7 +27,7 @@
 #   deploy:
 #     uses: mrturo-pf/pf-common/.github/workflows/deploy-reusable.yml@main
 #     with:
-#       repo_name: pf-rates  # service repository name
+#       repo_name: pf-svc-reference  # service repository name
 #     secrets: inherit  # REQUIRED - passes all GitHub secrets to the workflow
 # ```
 #
@@ -60,7 +60,7 @@ on:
   workflow_call:
     inputs:
       repo_name:
-        description: 'Repository checkout/package name (pf-rates, pf-svc-income)'
+        description: 'Repository checkout/package name (pf-svc-reference, pf-svc-income)'
         required: true
         type: string
       service_name:
@@ -306,7 +306,7 @@ jobs:
                   /opt/venv/lib/python3.12/site-packages/payroll/infrastructure/db/models/payroll.py
               '
               ;;
-            pf-rates)
+            pf-svc-reference)
               docker run --rm --entrypoint sh "${IMAGE_NAME}" -c '
                 grep -q '\''__tablename__ = "REF_RATE_UNIT"'\'' \
                   /opt/venv/lib/python3.12/site-packages/rates/infrastructure/db/models/financial_data.py
@@ -397,12 +397,12 @@ jobs:
           
           echo "Checking required secrets in Secret Manager..."
           
-          # Extract service name without 'pf-' prefix (pf-rates -> RATES)
+          # Extract service name without 'pf-' prefix (pf-svc-reference -> RATES)
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             API_KEY_SECRET="PF_INCOME_API_KEY"
-          elif [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+          elif [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
             API_KEY_SECRET="PF_REFERENCE_API_KEY"
           else
             API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
@@ -420,21 +420,21 @@ jobs:
             MISSING_SECRETS+=("${API_KEY_SECRET}")
           fi
           
-          # Services that call pf-rates must have PF_REFERENCE_API_KEY.
+          # Services that call pf-svc-reference must have PF_REFERENCE_API_KEY.
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             if ! gcloud secrets describe PF_REFERENCE_API_KEY --quiet > /dev/null 2>&1; then
               MISSING_SECRETS+=("PF_REFERENCE_API_KEY")
             fi
           fi
           
-          # For pf-rates, also check the Google Drive CSV export secret.
+          # For pf-svc-reference, also check the Google Drive CSV export secret.
           # Powers POST /exports/financial-data. Since the 2026-09-20
           # migration to a Service Account (see
           # docs/google-drive-credentials-setup.md), ADC handles auth --
           # only the destination folder ID is still a secret.
-          if [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
-            if ! gcloud secrets describe PF_RATES_GDRIVE_EXPORT_FOLDER_ID --quiet > /dev/null 2>&1; then
-              MISSING_SECRETS+=("PF_RATES_GDRIVE_EXPORT_FOLDER_ID")
+          if [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
+            if ! gcloud secrets describe PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID --quiet > /dev/null 2>&1; then
+              MISSING_SECRETS+=("PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID")
             fi
           fi
           
@@ -455,9 +455,9 @@ jobs:
               if [ "${SECRET}" = "${DATABASE_SECRET}" ]; then
                 echo "  echo '<postgresql-connection-string>' | \\\\"
                 echo "    gcloud secrets create ${DATABASE_SECRET} --data-file=- --replication-policy=automatic"
-              elif [ "${SECRET}" = "PF_RATES_GDRIVE_EXPORT_FOLDER_ID" ]; then
+              elif [ "${SECRET}" = "PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID" ]; then
                 echo "  echo -n '<google-drive-folder-id>' | \\"
-                echo "    gcloud secrets create PF_RATES_GDRIVE_EXPORT_FOLDER_ID --data-file=- --replication-policy=automatic"
+                echo "    gcloud secrets create PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID --data-file=- --replication-policy=automatic"
               else
                 echo "  echo -n \"\$(openssl rand -hex 32)\" | \\"
                 echo "    gcloud secrets create ${SECRET} --data-file=- --replication-policy=automatic"
@@ -515,7 +515,7 @@ jobs:
 
       # Deploy the new service revision.
       # Secret names follow convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
-      # e.g., pf-rates → PF_REFERENCE_API_KEY, pf-svc-income → PF_INCOME_API_KEY
+      # e.g., pf-svc-reference → PF_REFERENCE_API_KEY, pf-svc-income → PF_INCOME_API_KEY
       - name: Deploy to Cloud Run
         id: deploy
         run: |
@@ -534,41 +534,41 @@ jobs:
           # Secret Manager secrets
           # Always include PF_DATABASE_URL
           # API key follows naming convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
-          # Extract the service name without 'pf-' prefix (pf-rates -> RATES, pf-svc-income -> SVC_INCOME)
+          # Extract the service name without 'pf-' prefix (pf-svc-reference -> RATES, pf-svc-income -> SVC_INCOME)
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             API_KEY_SECRET="PF_INCOME_API_KEY"
-          elif [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+          elif [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
             API_KEY_SECRET="PF_REFERENCE_API_KEY"
           else
             API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           fi
-          if [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
+          if [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
             DATABASE_ENV="PF_REFERENCE_DATABASE_URL"
           else
             DATABASE_ENV="PF_DATABASE_URL"
           fi
           SECRETS_ARG="${DATABASE_ENV}=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
-          # PF_REFERENCE_API_KEY for services calling pf-rates.
+          # PF_REFERENCE_API_KEY for services calling pf-svc-reference.
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
             SECRETS_ARG="${SECRETS_ARG},PF_REFERENCE_API_KEY=PF_REFERENCE_API_KEY:latest"
           fi
 
-          # Google Drive CSV export credentials for pf-rates only (powers
+          # Google Drive CSV export credentials for pf-svc-reference only (powers
           # POST /exports/financial-data). Since the 2026-09-20 migration
           # to a Service Account, only the destination folder ID is a
           # secret -- ADC handles authentication, no OAuth token needed.
-          if [ "${{ inputs.repo_name }}" = "pf-rates" ]; then
-            SECRETS_ARG="${SECRETS_ARG},PF_RATES_GDRIVE_EXPORT_FOLDER_ID=PF_RATES_GDRIVE_EXPORT_FOLDER_ID:latest"
+          if [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
+            SECRETS_ARG="${SECRETS_ARG},PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID=PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID:latest"
           fi
 
           # Plain (non-secret) env vars. PF_REFERENCE_URL is a public Cloud Run
           # URL, not sensitive -- resolved dynamically here instead of
           # hardcoded, since Cloud Run URLs aren't derivable from the
           # project ID alone and this avoids a second manually-maintained
-          # copy of it going stale if pf-rates is ever redeployed elsewhere.
+          # copy of it going stale if pf-svc-reference is ever redeployed elsewhere.
           ENV_VARS_ARG="FINANCIAL_DATA_HTTP_PROXY="
           DEPENDENCY_SERVICE="${{ inputs.dependency_service_name }}"
           DEPENDENCY_ENV="${{ inputs.dependency_env_name }}"

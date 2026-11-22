@@ -21,7 +21,7 @@ one repository:
 - dependency and configuration validation utilities;
 - documentation for integrating the shared targets and helpers.
 
-The primary consumers are `pf-rates` and `pf-svc-income`. Keep shared code generic;
+The primary consumers are `pf-svc-reference` and `pf-svc-income`. Keep shared code generic;
 service-specific business logic belongs in the consuming service repository.
 
 ## Architecture and design
@@ -44,7 +44,7 @@ Changes to shared infrastructure are potentially cross-repository changes:
 2. Preserve existing target names, function names, environment variables, and exit
    codes unless a migration path is documented.
 3. Add or update executable validation for behavioral changes.
-4. Run the relevant checks in `pf-rates` and `pf-svc-income` before delivery when the
+4. Run the relevant checks in `pf-svc-reference` and `pf-svc-income` before delivery when the
    change affects their build, test, local-stack, or deployment workflow.
 5. Update this README or the focused documentation when integration behavior changes.
 
