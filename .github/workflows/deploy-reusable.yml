@@ -60,9 +60,24 @@ on:
   workflow_call:
     inputs:
       repo_name:
-        description: 'Repository name (pf-rates, pf-svc-income)'
+        description: 'Repository checkout/package name (pf-rates, pf-svc-income)'
         required: true
         type: string
+      service_name:
+        description: 'Optional physical Cloud Run service and image name'
+        required: false
+        type: string
+        default: ''
+      artifact_registry_repo:
+        description: 'Optional physical Artifact Registry repository name'
+        required: false
+        type: string
+        default: ''
+      runtime_service_account:
+        description: 'Optional physical Cloud Run runtime service account email'
+        required: false
+        type: string
+        default: ''
       # Deprecated compatibility input. It is intentionally ignored; merges to
       # protected main are the release approval and deployments are automatic.
       require_approval:
@@ -110,9 +125,9 @@ on:
 
 env:
   REGION: us-central1
-  AR_REPO: ${{ inputs.repo_name }}
-  SERVICE_NAME: ${{ inputs.repo_name }}
-  RUNTIME_SA: ${{ inputs.repo_name }}@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+  AR_REPO: ${{ inputs.artifact_registry_repo || inputs.repo_name }}
+  SERVICE_NAME: ${{ inputs.service_name || inputs.repo_name }}
+  RUNTIME_SA: ${{ inputs.runtime_service_account || format('{0}@{1}.iam.gserviceaccount.com', inputs.repo_name, secrets.GCP_PROJECT_ID) }}
 
 # NOTE: permissions must be declared by the CALLER workflow, not here
 
@@ -735,7 +750,7 @@ jobs:
     # this job from being skipped when earlier PR-only jobs do not run on main.
     if: |
       always() &&
-      github.event_name == 'push' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       github.ref == 'refs/heads/main' &&
       needs.deploy.result == 'success'
 
@@ -764,7 +779,7 @@ jobs:
             if RESPONSE=$(curl -sf --max-time 15 "${URL}"); then
               echo "Response: ${RESPONSE}"
               RESPONSE="${RESPONSE}" \
-              EXPECTED_SERVICE="${{ inputs.repo_name }}" \
+              EXPECTED_SERVICE="${{ env.SERVICE_NAME }}" \
               MAX_UPTIME_SECONDS="${MAX_UPTIME_SECONDS}" \
               python3 -c "
           import json, os, sys
