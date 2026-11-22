@@ -1,0 +1,1703 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PF backend gateway",
+    "description": "Explicit facade route map for pf-svc-reference and pf-svc-income.",
+    "version": "0.2.0"
+  },
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/reference/economic-indices": {
+      "get": {
+        "operationId": "reference_get_economic_indices",
+        "summary": "List Economic Indices",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/economic-indices",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/economic-indices/refresh": {
+      "post": {
+        "operationId": "reference_post_economic_indices_refresh",
+        "summary": "Refresh Economic Indices",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/economic-indices/refresh",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/economic-indices/value": {
+      "get": {
+        "operationId": "reference_get_economic_indices_value",
+        "summary": "Get Economic Index Value",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/economic-indices/value",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/economic-indices/values": {
+      "post": {
+        "operationId": "reference_post_economic_indices_values",
+        "summary": "Get Economic Index Values",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/economic-indices/values",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates": {
+      "get": {
+        "operationId": "reference_get_exchange_rates",
+        "summary": "List Exchange Rates",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exchange-rates",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates/refresh": {
+      "post": {
+        "operationId": "reference_post_exchange_rates_refresh",
+        "summary": "Refresh Exchange Rates",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exchange-rates/refresh",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates/value": {
+      "get": {
+        "operationId": "reference_get_exchange_rates_value",
+        "summary": "Get Exchange Rate Value",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exchange-rates/value",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates/values": {
+      "post": {
+        "operationId": "reference_post_exchange_rates_values",
+        "summary": "Get Exchange Rate Values",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exchange-rates/values",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/financial-data": {
+      "post": {
+        "operationId": "reference_post_exports_financial_data",
+        "summary": "Export Financial Data",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exports/financial-data",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs": {
+      "get": {
+        "operationId": "reference_get_exports_jobs",
+        "summary": "List Export Jobs",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exports/jobs",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs/stop": {
+      "post": {
+        "operationId": "reference_post_exports_jobs_stop",
+        "summary": "Stop All Export Jobs",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exports/jobs/stop",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs/{job_id}": {
+      "get": {
+        "operationId": "reference_get_exports_jobs_job_id",
+        "summary": "Get Export Job",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exports/jobs/{job_id}",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs/{job_id}/stop": {
+      "post": {
+        "operationId": "reference_post_exports_jobs_job_id_stop",
+        "summary": "Stop Export Job",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/exports/jobs/{job_id}/stop",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/health": {
+      "get": {
+        "operationId": "reference_get_health",
+        "summary": "Health",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/health",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/income-tax-brackets": {
+      "get": {
+        "operationId": "reference_get_income_tax_brackets",
+        "summary": "Get Income Tax Bracket",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/income-tax-brackets",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/income-tax-brackets/list": {
+      "get": {
+        "operationId": "reference_get_income_tax_brackets_list",
+        "summary": "List Income Tax Brackets",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/income-tax-brackets/list",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/income-tax-brackets/refresh": {
+      "post": {
+        "operationId": "reference_post_income_tax_brackets_refresh",
+        "summary": "Refresh Income Tax Brackets",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/income-tax-brackets/refresh",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/monetary-units": {
+      "get": {
+        "operationId": "reference_get_monetary_units",
+        "summary": "List Monetary Units",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/monetary-units",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/sync": {
+      "post": {
+        "operationId": "reference_post_sync",
+        "summary": "Sync Market Data",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/sync",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/health": {
+      "get": {
+        "operationId": "income_get_health",
+        "summary": "Health",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/health",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll": {
+      "delete": {
+        "operationId": "income_delete_payroll",
+        "summary": "Delete Payroll Periods",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll",
+        "summary": "List Payroll Periods",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/contracts": {
+      "delete": {
+        "operationId": "income_delete_payroll_contracts",
+        "summary": "Delete Contracts",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/contracts",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_contracts",
+        "summary": "List Contracts",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/contracts",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "post": {
+        "operationId": "income_post_payroll_contracts",
+        "summary": "Maintain Contracts",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/contracts",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/employers": {
+      "delete": {
+        "operationId": "income_delete_payroll_employers",
+        "summary": "Delete Employers",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/employers",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_employers",
+        "summary": "List Employers",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/employers",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "post": {
+        "operationId": "income_post_payroll_employers",
+        "summary": "Maintain Employers",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/employers",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/import/json": {
+      "post": {
+        "operationId": "income_post_payroll_import_json",
+        "summary": "Import Payroll Rows",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/import/json",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/import/spreadsheet": {
+      "post": {
+        "operationId": "income_post_payroll_import_spreadsheet",
+        "summary": "Import Payroll",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/import/spreadsheet",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/pdf-preview": {
+      "post": {
+        "operationId": "income_post_payroll_pdf_preview",
+        "summary": "Preview Pdf Import",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/pdf-preview",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/spreadsheet": {
+      "get": {
+        "operationId": "income_get_payroll_spreadsheet",
+        "summary": "Get Payroll Spreadsheet",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/spreadsheet",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/spreadsheet/template": {
+      "get": {
+        "operationId": "income_get_payroll_spreadsheet_template",
+        "summary": "Get Payroll Spreadsheet Template",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/spreadsheet/template",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/templates": {
+      "get": {
+        "operationId": "income_get_payroll_templates",
+        "summary": "List Templates",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/templates",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "post": {
+        "operationId": "income_post_payroll_templates",
+        "summary": "Create Template",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/templates",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/templates/{template_id}": {
+      "delete": {
+        "operationId": "income_delete_payroll_templates_template_id",
+        "summary": "Deactivate Template",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/templates/{template_id}",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_templates_template_id",
+        "summary": "Get Template",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/templates/{template_id}",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "put": {
+        "operationId": "income_put_payroll_templates_template_id",
+        "summary": "Update Template",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/templates/{template_id}",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/{period_id}": {
+      "delete": {
+        "operationId": "income_delete_payroll_period_id",
+        "summary": "Delete Payroll Period",
+        "parameters": [
+          {
+            "name": "period_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/{period_id}",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_period_id",
+        "summary": "Get Payroll Period",
+        "parameters": [
+          {
+            "name": "period_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll/{period_id}",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/contribution-caps": {
+      "get": {
+        "operationId": "income_get_reference_data_contribution_caps",
+        "summary": "List Contribution Caps",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/reference-data/contribution-caps",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/health-institutions": {
+      "get": {
+        "operationId": "income_get_reference_data_health_institutions",
+        "summary": "List Health Institutions",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/reference-data/health-institutions",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/health-plans": {
+      "get": {
+        "operationId": "income_get_reference_data_health_plans",
+        "summary": "List Health Plans",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/reference-data/health-plans",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/payroll-concepts": {
+      "get": {
+        "operationId": "income_get_reference_data_payroll_concepts",
+        "summary": "List Payroll Concepts",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/reference-data/payroll-concepts",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/pension-institutions": {
+      "get": {
+        "operationId": "income_get_reference_data_pension_institutions",
+        "summary": "List Pension Institutions",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/reference-data/pension-institutions",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/pension-plans": {
+      "get": {
+        "operationId": "income_get_reference_data_pension_plans",
+        "summary": "List Pension Plans",
+        "parameters": [],
+        "x-google-backend": {
+          "address": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/reference-data/pension-plans",
+          "path_translation": "CONSTANT_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-svc-income-yqd4p7fzaa-uc.a.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    }
+  }
+}

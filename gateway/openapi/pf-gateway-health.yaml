@@ -1,0 +1,82 @@
+swagger: '2.0'
+info:
+  title: PF backend gateway facade
+  description: Health-only facade proof of concept for PF Cloud Run services.
+  version: 0.1.0
+schemes:
+  - https
+produces:
+  - application/json
+paths:
+  /reference/health:
+    get:
+      operationId: referenceHealth
+      summary: Check pf-svc-reference health
+      x-google-backend:
+        address: https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/health
+        path_translation: CONSTANT_ADDRESS
+        deadline: 30.0
+        jwt_audience: https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app
+      responses:
+        '200':
+          description: Reference service is healthy.
+          schema:
+            type: object
+        '500':
+          description: Backend failure.
+  /income/health:
+    get:
+      operationId: incomeHealth
+      summary: Check pf-svc-income health
+      x-google-backend:
+        address: https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/health
+        path_translation: CONSTANT_ADDRESS
+        deadline: 30.0
+        jwt_audience: https://pf-svc-income-yqd4p7fzaa-uc.a.run.app
+      responses:
+        '200':
+          description: Income service is healthy.
+          schema:
+            type: object
+        '500':
+          description: Backend failure.
+  /reference/monetary-units:
+    get:
+      operationId: referenceMonetaryUnits
+      summary: List reference monetary units
+      x-google-backend:
+        address: https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app/monetary-units
+        path_translation: CONSTANT_ADDRESS
+        deadline: 30.0
+        jwt_audience: https://pf-svc-reference-yqd4p7fzaa-uc.a.run.app
+      responses:
+        '200':
+          description: Monetary units.
+          schema:
+            type: array
+            items:
+              type: object
+        '400':
+          description: Invalid request correlation ID.
+        '403':
+          description: Invalid or missing application API key.
+  /income/payroll:
+    get:
+      operationId: incomePayroll
+      summary: List payroll periods
+      x-google-backend:
+        address: https://pf-svc-income-yqd4p7fzaa-uc.a.run.app/payroll
+        path_translation: CONSTANT_ADDRESS
+        deadline: 30.0
+        jwt_audience: https://pf-svc-income-yqd4p7fzaa-uc.a.run.app
+      responses:
+        '200':
+          description: Payroll periods.
+          schema:
+            type: array
+            items:
+              type: object
+        '400':
+          description: Invalid request correlation ID.
+        '403':
+          description: Invalid or missing application API key.

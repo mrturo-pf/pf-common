@@ -1,0 +1,2294 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PF backend gateway proxy route map",
+    "description": "Explicit routes through the scale-to-zero pf-gateway-proxy.",
+    "version": "0.2.0"
+  },
+  "schemes": [
+    "https"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/reference/economic-indices": {
+      "get": {
+        "operationId": "reference_get_economic_indices",
+        "summary": "List Economic Indices",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/economic-indices/refresh": {
+      "post": {
+        "operationId": "reference_post_economic_indices_refresh",
+        "summary": "Refresh Economic Indices",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/economic-indices/value": {
+      "get": {
+        "operationId": "reference_get_economic_indices_value",
+        "summary": "Get Economic Index Value",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/economic-indices/values": {
+      "post": {
+        "operationId": "reference_post_economic_indices_values",
+        "summary": "Get Economic Index Values",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates": {
+      "get": {
+        "operationId": "reference_get_exchange_rates",
+        "summary": "List Exchange Rates",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates/refresh": {
+      "post": {
+        "operationId": "reference_post_exchange_rates_refresh",
+        "summary": "Refresh Exchange Rates",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates/value": {
+      "get": {
+        "operationId": "reference_get_exchange_rates_value",
+        "summary": "Get Exchange Rate Value",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exchange-rates/values": {
+      "post": {
+        "operationId": "reference_post_exchange_rates_values",
+        "summary": "Get Exchange Rate Values",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/financial-data": {
+      "post": {
+        "operationId": "reference_post_exports_financial_data",
+        "summary": "Export Financial Data",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs": {
+      "get": {
+        "operationId": "reference_get_exports_jobs",
+        "summary": "List Export Jobs",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs/stop": {
+      "post": {
+        "operationId": "reference_post_exports_jobs_stop",
+        "summary": "Stop All Export Jobs",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs/{job_id}": {
+      "get": {
+        "operationId": "reference_get_exports_jobs_job_id",
+        "summary": "Get Export Job",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/exports/jobs/{job_id}/stop": {
+      "post": {
+        "operationId": "reference_post_exports_jobs_job_id_stop",
+        "summary": "Stop Export Job",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/health": {
+      "get": {
+        "operationId": "reference_get_health",
+        "summary": "Health",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/income-tax-brackets": {
+      "get": {
+        "operationId": "reference_get_income_tax_brackets",
+        "summary": "Get Income Tax Bracket",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/income-tax-brackets/list": {
+      "get": {
+        "operationId": "reference_get_income_tax_brackets_list",
+        "summary": "List Income Tax Brackets",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/income-tax-brackets/refresh": {
+      "post": {
+        "operationId": "reference_post_income_tax_brackets_refresh",
+        "summary": "Refresh Income Tax Brackets",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/monetary-units": {
+      "get": {
+        "operationId": "reference_get_monetary_units",
+        "summary": "List Monetary Units",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/reference/sync": {
+      "post": {
+        "operationId": "reference_post_sync",
+        "summary": "Sync Market Data",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/health": {
+      "get": {
+        "operationId": "income_get_health",
+        "summary": "Health",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll": {
+      "delete": {
+        "operationId": "income_delete_payroll",
+        "summary": "Delete Payroll Periods",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll",
+        "summary": "List Payroll Periods",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/contracts": {
+      "delete": {
+        "operationId": "income_delete_payroll_contracts",
+        "summary": "Delete Contracts",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_contracts",
+        "summary": "List Contracts",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "post": {
+        "operationId": "income_post_payroll_contracts",
+        "summary": "Maintain Contracts",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/employers": {
+      "delete": {
+        "operationId": "income_delete_payroll_employers",
+        "summary": "Delete Employers",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_employers",
+        "summary": "List Employers",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "post": {
+        "operationId": "income_post_payroll_employers",
+        "summary": "Maintain Employers",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/import/json": {
+      "post": {
+        "operationId": "income_post_payroll_import_json",
+        "summary": "Import Payroll Rows",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/import/spreadsheet": {
+      "post": {
+        "operationId": "income_post_payroll_import_spreadsheet",
+        "summary": "Import Payroll",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/pdf-preview": {
+      "post": {
+        "operationId": "income_post_payroll_pdf_preview",
+        "summary": "Preview Pdf Import",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/spreadsheet": {
+      "get": {
+        "operationId": "income_get_payroll_spreadsheet",
+        "summary": "Get Payroll Spreadsheet",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/spreadsheet/template": {
+      "get": {
+        "operationId": "income_get_payroll_spreadsheet_template",
+        "summary": "Get Payroll Spreadsheet Template",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/templates": {
+      "get": {
+        "operationId": "income_get_payroll_templates",
+        "summary": "List Templates",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "post": {
+        "operationId": "income_post_payroll_templates",
+        "summary": "Create Template",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/templates/{template_id}": {
+      "delete": {
+        "operationId": "income_delete_payroll_templates_template_id",
+        "summary": "Deactivate Template",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_templates_template_id",
+        "summary": "Get Template",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "put": {
+        "operationId": "income_put_payroll_templates_template_id",
+        "summary": "Update Template",
+        "parameters": [
+          {
+            "name": "template_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/payroll/{period_id}": {
+      "delete": {
+        "operationId": "income_delete_payroll_period_id",
+        "summary": "Delete Payroll Period",
+        "parameters": [
+          {
+            "name": "period_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      },
+      "get": {
+        "operationId": "income_get_payroll_period_id",
+        "summary": "Get Payroll Period",
+        "parameters": [
+          {
+            "name": "period_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/contribution-caps": {
+      "get": {
+        "operationId": "income_get_reference_data_contribution_caps",
+        "summary": "List Contribution Caps",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/health-institutions": {
+      "get": {
+        "operationId": "income_get_reference_data_health_institutions",
+        "summary": "List Health Institutions",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/health-plans": {
+      "get": {
+        "operationId": "income_get_reference_data_health_plans",
+        "summary": "List Health Plans",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/payroll-concepts": {
+      "get": {
+        "operationId": "income_get_reference_data_payroll_concepts",
+        "summary": "List Payroll Concepts",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/pension-institutions": {
+      "get": {
+        "operationId": "income_get_reference_data_pension_institutions",
+        "summary": "List Pension Institutions",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    },
+    "/income/reference-data/pension-plans": {
+      "get": {
+        "operationId": "income_get_reference_data_pension_plans",
+        "summary": "List Pension Plans",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "x-google-backend": {
+          "address": "https://pf-gateway-proxy-646185261155.us-central1.run.app",
+          "path_translation": "APPEND_PATH_TO_ADDRESS",
+          "deadline": 30.0,
+          "jwt_audience": "https://pf-gateway-proxy-646185261155.us-central1.run.app"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response."
+          },
+          "400": {
+            "description": "Invalid request."
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "Forbidden."
+          },
+          "404": {
+            "description": "Not found."
+          },
+          "422": {
+            "description": "Validation error."
+          },
+          "500": {
+            "description": "Backend failure."
+          }
+        }
+      }
+    }
+  }
+}
