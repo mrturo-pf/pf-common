@@ -108,6 +108,11 @@ on:
         required: false
         type: string
         default: ''
+      dependency_url:
+        description: 'Optional explicit dependency URL; overrides service discovery'
+        required: false
+        type: string
+        default: ''
       protected_smoke_path:
         description: 'Optional protected endpoint path to smoke-test after deployment'
         required: false
@@ -572,19 +577,28 @@ jobs:
           ENV_VARS_ARG="FINANCIAL_DATA_HTTP_PROXY="
           DEPENDENCY_SERVICE="${{ inputs.dependency_service_name }}"
           DEPENDENCY_ENV="${{ inputs.dependency_env_name }}"
-          if [ -n "${DEPENDENCY_SERVICE}" ] || [ -n "${DEPENDENCY_ENV}" ]; then
-            if [ -z "${DEPENDENCY_SERVICE}" ] || [ -z "${DEPENDENCY_ENV}" ]; then
-              echo "ERROR: dependency_service_name and dependency_env_name must be provided together"
+          DEPENDENCY_URL="${{ inputs.dependency_url }}"
+          if [ -n "${DEPENDENCY_SERVICE}" ] || [ -n "${DEPENDENCY_ENV}" ] || [ -n "${DEPENDENCY_URL}" ]; then
+            if [ -z "${DEPENDENCY_ENV}" ]; then
+              echo "ERROR: dependency_env_name must be provided when a dependency is configured"
               exit 1
             fi
-            echo "Resolving dependency Cloud Run URL for ${DEPENDENCY_SERVICE}..."
-            DEPENDENCY_URL=$(gcloud run services describe "${DEPENDENCY_SERVICE}" \
-              --region="${{ env.REGION }}" --format="value(status.url)")
             if [ -z "${DEPENDENCY_URL}" ]; then
-              echo "ERROR: could not resolve dependency service URL"
-              exit 1
+              if [ -z "${DEPENDENCY_SERVICE}" ]; then
+                echo "ERROR: dependency_service_name or dependency_url must be provided"
+                exit 1
+              fi
+              echo "Resolving dependency Cloud Run URL for ${DEPENDENCY_SERVICE}..."
+              DEPENDENCY_URL=$(gcloud run services describe "${DEPENDENCY_SERVICE}" \
+                --region="${{ env.REGION }}" --format="value(status.url)")
+              if [ -z "${DEPENDENCY_URL}" ]; then
+                echo "ERROR: could not resolve dependency service URL"
+                exit 1
+              fi
+              echo "Resolved dependency URL for ${DEPENDENCY_SERVICE}"
+            else
+              echo "Using explicit dependency URL"
             fi
-            echo "Resolved dependency URL for ${DEPENDENCY_SERVICE}"
             ENV_VARS_ARG="${ENV_VARS_ARG},${DEPENDENCY_ENV}=${DEPENDENCY_URL}"
           fi
 

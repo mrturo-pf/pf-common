@@ -95,6 +95,14 @@ When a shared change affects a consumer, run that consumer's documented `make ch
 - Runtime credentials belong to the consuming service's approved secret-management
   workflow, not to this repository.
 
+## Gateway entry-point policy
+
+The GCP API Gateway plus `pf-gateway-proxy` is the only approved production entry point
+for `pf-svc-*` traffic. Shared deployment/configuration changes must not publish direct
+Cloud Run URLs as consumer endpoints. Direct URLs are rollback/diagnostic paths only,
+and backend-to-backend integrations must migrate to the gateway facade before final
+access enforcement.
+
 ## Cost and operational safety
 
 Cloud cost is always the priority for shared deployment helpers: prefer scale-to-zero,
