@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate that core dependencies are synchronized between pf-svc-income and pf-rates.
+"""Validate that core dependencies are synchronized between pf-svc-income and pf-svc-reference.
 
 This script ensures that critical shared dependencies (FastAPI, SQLAlchemy, pytest, etc.)
 are at the same minimum version across all FastAPI microservices in the PF ecosystem.
@@ -70,7 +70,7 @@ def main() -> int:
     # Paths to pyproject.toml files
     repo_root = Path(__file__).parent.parent.parent
     income_toml = repo_root / "pf-svc-income" / "pyproject.toml"
-    rates_toml = repo_root / "pf-rates" / "pyproject.toml"
+    rates_toml = repo_root / "pf-svc-reference" / "pyproject.toml"
 
     # Check files exist
     if not income_toml.exists():
@@ -99,12 +99,12 @@ def main() -> int:
 
     # Report results
     if mismatches:
-        print("ERROR: Core dependencies differ between pf-svc-income and pf-rates:")
+        print("ERROR: Core dependencies differ between pf-svc-income and pf-svc-reference:")
         print()
         for dep, income_ver, rates_ver in mismatches:
             print(f"  {dep}:")
             print(f"    pf-svc-income: {income_ver}")
-            print(f"    pf-rates:   {rates_ver}")
+            print(f"    pf-svc-reference:   {rates_ver}")
         print()
         print(
             f"Found {len(mismatches)} mismatch(es) out of {len(CORE_DEPS)} core dependencies."
@@ -112,7 +112,7 @@ def main() -> int:
         return 1
     else:
         print(
-            f"All {len(CORE_DEPS)} core dependencies are synchronized between pf-svc-income and pf-rates"
+            f"All {len(CORE_DEPS)} core dependencies are synchronized between pf-svc-income and pf-svc-reference"
         )
         return 0
 

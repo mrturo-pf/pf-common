@@ -161,5 +161,5 @@ No manual configuration needed.
 
 See:
 - `../../pf-svc-income/Makefile` - Full example with CLI, PDF generation
-- `../../pf-rates/Makefile` - Minimal example
+- `../../pf-svc-reference/Makefile` - Minimal example
 - `templates/service.mk` - Template for new services

@@ -8,7 +8,7 @@ pf-common provides reusable Make targets, validation scripts, and templates for 
 
 **Services using pf-common:**
 - [pf-svc-income](https://github.com/mrturo-pf/pf-svc-income) - Chilean payroll microservice
-- [pf-rates](https://github.com/mrturo-pf/pf-rates) - Financial reference data microservice
+- [pf-svc-reference](https://github.com/mrturo-pf/pf-svc-reference) - Financial reference data microservice
 - Future services...
 
 **NOT used by:**
@@ -41,7 +41,7 @@ Shared Makefile infrastructure for FastAPI microservices:
 - **common.mk** - Shared targets (install, test, lint, check, etc.)
 - **templates/** - Makefile templates for new services
 
-**Used by:** pf-svc-income, pf-rates, and future FastAPI services
+**Used by:** pf-svc-income, pf-svc-reference, and future FastAPI services
 **NOT used by:** pf-db (different type of repo)
 
 See [make/README.md](make/README.md) for detailed usage.
@@ -150,7 +150,7 @@ python scripts/sync_deps.py
 4. **Well-documented** - Clear usage guides and examples
 5. **Versioned** - Changes tracked via git history
 6. **Cloud cost is always the priority** - the shared `deploy-reusable.yml` pipeline
-   (consumed by pf-rates and pf-svc-income) must default every infra knob to the cheapest
+   (consumed by pf-svc-reference and pf-svc-income) must default every infra knob to the cheapest
    viable option: scale-to-zero (`--min-instances=0`), free scanning (Trivy) over paid
    Artifact Registry scanning, on-demand jobs over always-on services. Any change here
    affects cost for every consuming service at once - evaluate the cost delta first.

@@ -22,7 +22,7 @@ on:
   workflow_call:
     inputs:
       service_name:
-        description: 'Service to setup (pf-rates, pf-svc-income, pf-db)'
+        description: 'Service to setup (pf-svc-reference, pf-svc-income, pf-db)'
         required: true
         type: string
       create_secrets:
@@ -83,7 +83,7 @@ jobs:
           
           SERVICES=()
           if [ "${{ inputs.service_name }}" = "all" ]; then
-            SERVICES=("pf-rates" "pf-svc-income" "pf-db")
+            SERVICES=("pf-svc-reference" "pf-svc-income" "pf-db")
           else
             SERVICES=("${{ inputs.service_name }}")
           fi
@@ -139,13 +139,13 @@ jobs:
             "postgresql+asyncpg://user:pass@/pf_db?host=/cloudsql/${{ secrets.GCP_PROJECT_ID }}:${{ env.REGION }}:pf-db"
           
           # Service-specific API keys
-          if [ "${{ inputs.service_name }}" = "pf-rates" ] || [ "${{ inputs.service_name }}" = "all" ]; then
+          if [ "${{ inputs.service_name }}" = "pf-svc-reference" ] || [ "${{ inputs.service_name }}" = "all" ]; then
             create_secret_if_missing "PF_REFERENCE_API_KEY" "$(openssl rand -hex 32)"
           fi
           
           if [ "${{ inputs.service_name }}" = "pf-svc-income" ] || [ "${{ inputs.service_name }}" = "all" ]; then
             create_secret_if_missing "PF_INCOME_API_KEY" "$(openssl rand -hex 32)"
-            # pf-svc-income also needs PF_REFERENCE_API_KEY to call pf-rates
+            # pf-svc-income also needs PF_REFERENCE_API_KEY to call pf-svc-reference
             create_secret_if_missing "PF_REFERENCE_API_KEY" "$(openssl rand -hex 32)"
           fi
 
@@ -156,7 +156,7 @@ jobs:
           
           SERVICES=()
           if [ "${{ inputs.service_name }}" = "all" ]; then
-            SERVICES=("pf-rates" "pf-svc-income")
+            SERVICES=("pf-svc-reference" "pf-svc-income")
           elif [ "${{ inputs.service_name }}" != "pf-db" ]; then
             SERVICES=("${{ inputs.service_name }}")
           fi
@@ -173,7 +173,7 @@ jobs:
               --quiet || echo "  Could not grant ${SA} access to PF_DATABASE_URL"
             
             # Grant service-specific secret access
-            if [ "${SERVICE}" = "pf-rates" ]; then
+            if [ "${SERVICE}" = "pf-svc-reference" ]; then
               gcloud secrets add-iam-policy-binding PF_REFERENCE_API_KEY \
                 --member="serviceAccount:${SA}" \
                 --role="roles/secretmanager.secretAccessor" \
