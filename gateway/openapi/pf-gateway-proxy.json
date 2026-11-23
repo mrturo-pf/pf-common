@@ -5,6 +5,14 @@
     "description": "Explicit routes through the scale-to-zero pf-gateway-proxy.",
     "version": "0.2.0"
   },
+  "securityDefinitions": {
+    "gateway_api_key": {
+      "type": "apiKey",
+      "name": "X-Gateway-API-Key",
+      "in": "header",
+      "description": "Consumer API key validated by Google Cloud API Gateway."
+    }
+  },
   "schemes": [
     "https"
   ],
@@ -58,7 +66,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/economic-indices/refresh": {
@@ -107,7 +120,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/economic-indices/value": {
@@ -156,7 +174,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/economic-indices/values": {
@@ -205,7 +228,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exchange-rates": {
@@ -254,7 +282,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exchange-rates/refresh": {
@@ -303,7 +336,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exchange-rates/value": {
@@ -352,7 +390,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exchange-rates/values": {
@@ -401,7 +444,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exports/financial-data": {
@@ -450,7 +498,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exports/jobs": {
@@ -499,7 +552,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exports/jobs/stop": {
@@ -548,7 +606,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exports/jobs/{job_id}": {
@@ -603,7 +666,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/exports/jobs/{job_id}/stop": {
@@ -658,7 +726,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/health": {
@@ -756,7 +829,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/income-tax-brackets/list": {
@@ -805,7 +883,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/income-tax-brackets/refresh": {
@@ -854,7 +937,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/monetary-units": {
@@ -903,7 +991,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/reference/sync": {
@@ -952,7 +1045,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/health": {
@@ -1050,7 +1148,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "get": {
         "operationId": "income_get_payroll",
@@ -1097,7 +1200,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/contracts": {
@@ -1146,7 +1254,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "get": {
         "operationId": "income_get_payroll_contracts",
@@ -1193,7 +1306,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "post": {
         "operationId": "income_post_payroll_contracts",
@@ -1240,7 +1358,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/employers": {
@@ -1289,7 +1412,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "get": {
         "operationId": "income_get_payroll_employers",
@@ -1336,7 +1464,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "post": {
         "operationId": "income_post_payroll_employers",
@@ -1383,7 +1516,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/import/json": {
@@ -1432,7 +1570,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/import/spreadsheet": {
@@ -1481,7 +1624,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/pdf-preview": {
@@ -1530,7 +1678,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/spreadsheet": {
@@ -1579,7 +1732,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/spreadsheet/template": {
@@ -1628,7 +1786,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/templates": {
@@ -1677,7 +1840,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "post": {
         "operationId": "income_post_payroll_templates",
@@ -1724,7 +1892,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/templates/{template_id}": {
@@ -1779,7 +1952,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "get": {
         "operationId": "income_get_payroll_templates_template_id",
@@ -1832,7 +2010,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "put": {
         "operationId": "income_put_payroll_templates_template_id",
@@ -1885,7 +2068,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/payroll/{period_id}": {
@@ -1940,7 +2128,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       },
       "get": {
         "operationId": "income_get_payroll_period_id",
@@ -1993,7 +2186,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/reference-data/contribution-caps": {
@@ -2042,7 +2240,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/reference-data/health-institutions": {
@@ -2091,7 +2294,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/reference-data/health-plans": {
@@ -2140,7 +2348,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/reference-data/payroll-concepts": {
@@ -2189,7 +2402,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/reference-data/pension-institutions": {
@@ -2238,7 +2456,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     },
     "/income/reference-data/pension-plans": {
@@ -2287,7 +2510,12 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": [
+          {
+            "gateway_api_key": []
+          }
+        ]
       }
     }
   }
