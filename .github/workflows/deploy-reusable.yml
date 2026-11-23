@@ -608,7 +608,7 @@ jobs:
           GCLOUD_CMD="$GCLOUD_CMD --image=${IMAGE}"
           GCLOUD_CMD="$GCLOUD_CMD --region=${{ env.REGION }}"
           GCLOUD_CMD="$GCLOUD_CMD --platform=managed"
-          GCLOUD_CMD="$GCLOUD_CMD --allow-unauthenticated"
+          GCLOUD_CMD="$GCLOUD_CMD --no-allow-unauthenticated"
           GCLOUD_CMD="$GCLOUD_CMD --service-account=${{ env.RUNTIME_SA }}"
           GCLOUD_CMD="$GCLOUD_CMD --min-instances=0"
           GCLOUD_CMD="$GCLOUD_CMD --max-instances=2"
@@ -769,16 +769,25 @@ jobs:
       needs.deploy.result == 'success'
 
     steps:
-      # The deploy job already pins 100% of traffic to the new revision and
-      # verifies that assignment before exposing its service URL. The smoke
-      # test therefore only needs the public health endpoint; authenticating
-      # a second time here would add an unnecessary WIF failure point.
+      # The service is IAM-protected. Authenticate the smoke request with the
+      # deployer identity instead of making the Cloud Run service public.
+      - name: Authenticate smoke test to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ inputs.workload_identity_provider }}
+          service_account: ${{ inputs.deployer_service_account }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Verify /health reports ok, the right service, and a fresh uptime
         run: |
           set -euo pipefail
 
-          URL="${{ needs.deploy.outputs.service_url }}/health"
+          SERVICE_URL="${{ needs.deploy.outputs.service_url }}"
+          URL="${SERVICE_URL}/health"
+          TOKEN=$(gcloud auth print-identity-token --audiences="${SERVICE_URL}")
           # Cloud Run routes 100% of traffic to the new revision the moment
           # 'gcloud run deploy' returns, and with min-instances=0 the very
           # first request cold-starts a brand-new container — so a genuinely
@@ -790,7 +799,8 @@ jobs:
           echo "Checking ${URL} (max ${MAX_UPTIME_SECONDS}s uptime expected)..."
 
           for attempt in $(seq 1 10); do
-            if RESPONSE=$(curl -sf --max-time 15 "${URL}"); then
+            if RESPONSE=$(curl -sf --max-time 15 \
+              --header "Authorization: Bearer ${TOKEN}" "${URL}"); then
               echo "Response: ${RESPONSE}"
               RESPONSE="${RESPONSE}" \
               EXPECTED_SERVICE="${{ env.SERVICE_NAME }}" \
