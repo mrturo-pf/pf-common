@@ -13,6 +13,11 @@
       "description": "Consumer API key validated by Google Cloud API Gateway."
     }
   },
+  "security": [
+    {
+      "gateway_api_key": []
+    }
+  ],
   "schemes": [
     "https"
   ],
@@ -780,7 +785,8 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": []
       }
     },
     "/reference/income-tax-brackets": {
@@ -1099,7 +1105,8 @@
           "500": {
             "description": "Backend failure."
           }
-        }
+        },
+        "security": []
       }
     },
     "/income/payroll": {
