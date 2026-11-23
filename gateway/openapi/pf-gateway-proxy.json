@@ -8,7 +8,7 @@
   "securityDefinitions": {
     "gateway_api_key": {
       "type": "apiKey",
-      "name": "X-Gateway-API-Key",
+      "name": "X-API-Key",
       "in": "header",
       "description": "Consumer API key validated by Google Cloud API Gateway."
     }
