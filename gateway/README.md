@@ -23,9 +23,12 @@ GET /reference/monetary-units
 GET /income/payroll
 ```
 
-It uses the generated `gateway.dev` hostname, keeps the direct Cloud Run URLs available,
-and does not configure Google API consumer-key security. Application `X-API-Key` and
-`X-Request-ID` behavior remain owned by the backend services.
+The approved migration config uses the generated `gateway.dev` hostname and keeps the
+health operations keyless. Business operations use native Google API Gateway API-key
+security with the `X-Gateway-API-Key` header. API Gateway forwards original headers, so
+`pf-gateway-proxy` removes that gateway-owned header before backend forwarding;
+application `X-API-Key` remains a temporary compatibility header until backend services
+stop requiring it. Direct Cloud Run URLs remain IAM-protected rollback paths.
 
 The backend service account used by API Gateway must have only the required
 `roles/run.invoker` permissions. Do not add API keys, credentials, or tokens to this
