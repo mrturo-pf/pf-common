@@ -123,6 +123,16 @@ on:
         required: false
         type: string
         default: ''
+      smoke_url:
+        description: 'Optional public gateway health URL; defaults to the direct Cloud Run URL'
+        required: false
+        type: string
+        default: ''
+      smoke_requires_auth:
+        description: 'Whether the smoke URL requires a Cloud Run identity token'
+        required: false
+        type: boolean
+        default: true
 
 # Deploy concurrency is scoped to the deploy job below. Keeping it out of the
 # workflow-level concurrency group prevents a documentation-only run from
@@ -773,6 +783,7 @@ jobs:
 
     steps:
       - name: Checkout pf-common for composite actions
+        if: inputs.smoke_requires_auth
         uses: actions/checkout@v7
         with:
           repository: mrturo-pf/pf-common
@@ -782,6 +793,7 @@ jobs:
       # the deploy job so WIF and the configured GCP_SA_KEY fallback behave
       # identically; never make the Cloud Run service public for smoke tests.
       - name: Authenticate smoke test to Google Cloud
+        if: inputs.smoke_requires_auth
         uses: ./.pf-common/.github/actions/gcp-auth
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
@@ -794,8 +806,16 @@ jobs:
           set -euo pipefail
 
           SERVICE_URL="${{ needs.deploy.outputs.service_url }}"
-          URL="${SERVICE_URL}/health"
-          TOKEN=$(gcloud auth print-identity-token --audiences="${SERVICE_URL}")
+          URL="${{ inputs.smoke_url }}"
+          if [[ -z "${URL}" ]]; then
+            URL="${SERVICE_URL}/health"
+          fi
+
+          AUTH_ARGS=()
+          if [[ "${{ inputs.smoke_requires_auth }}" == "true" ]]; then
+            TOKEN=$(gcloud auth print-identity-token --audiences="${SERVICE_URL}")
+            AUTH_ARGS=(--header "Authorization: Bearer ${TOKEN}")
+          fi
           # Cloud Run routes 100% of traffic to the new revision the moment
           # 'gcloud run deploy' returns, and with min-instances=0 the very
           # first request cold-starts a brand-new container — so a genuinely
@@ -808,7 +828,7 @@ jobs:
 
           for attempt in $(seq 1 10); do
             if RESPONSE=$(curl -sf --max-time 15 \
-              --header "Authorization: Bearer ${TOKEN}" "${URL}"); then
+              "${AUTH_ARGS[@]}" "${URL}"); then
               echo "Response: ${RESPONSE}"
               RESPONSE="${RESPONSE}" \
               EXPECTED_SERVICE="${{ env.SERVICE_NAME }}" \
