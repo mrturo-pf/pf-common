@@ -3,7 +3,7 @@
 # ==============================================================================
 #
 # This workflow creates all required GCP resources for deploying PF services:
-#   - Secret Manager secrets (PF_DATABASE_URL, PF_REFERENCE_API_KEY, PF_INCOME_API_KEY)
+#   - Secret Manager secrets (PF_DATABASE_URL, PF_SVC_REFERENCE_API_KEY, PF_SVC_INCOME_API_KEY)
 #   - Artifact Registry repositories
 #   - Service Account IAM permissions
 #
@@ -153,13 +153,13 @@ jobs:
           
           # Service-specific API keys
           if [ "${{ inputs.service_name }}" = "pf-svc-reference" ] || [ "${{ inputs.service_name }}" = "all" ]; then
-            create_secret_if_missing "PF_REFERENCE_API_KEY" "$(openssl rand -hex 32)"
+            create_secret_if_missing "PF_SVC_REFERENCE_API_KEY" "$(openssl rand -hex 32)"
           fi
           
           if [ "${{ inputs.service_name }}" = "pf-svc-income" ] || [ "${{ inputs.service_name }}" = "all" ]; then
-            create_secret_if_missing "PF_INCOME_API_KEY" "$(openssl rand -hex 32)"
-            # pf-svc-income also needs PF_REFERENCE_API_KEY to call pf-svc-reference
-            create_secret_if_missing "PF_REFERENCE_API_KEY" "$(openssl rand -hex 32)"
+            create_secret_if_missing "PF_SVC_INCOME_API_KEY" "$(openssl rand -hex 32)"
+            # pf-svc-income also needs PF_SVC_REFERENCE_API_KEY to call pf-svc-reference
+            create_secret_if_missing "PF_SVC_REFERENCE_API_KEY" "$(openssl rand -hex 32)"
           fi
 
       - name: Grant Service Account access to secrets
@@ -187,21 +187,21 @@ jobs:
             
             # Grant service-specific secret access
             if [ "${SERVICE}" = "pf-svc-reference" ]; then
-              gcloud secrets add-iam-policy-binding PF_REFERENCE_API_KEY \
+              gcloud secrets add-iam-policy-binding PF_SVC_REFERENCE_API_KEY \
                 --member="serviceAccount:${SA}" \
                 --role="roles/secretmanager.secretAccessor" \
-                --quiet || echo "  Could not grant access to PF_REFERENCE_API_KEY"
+                --quiet || echo "  Could not grant access to PF_SVC_REFERENCE_API_KEY"
             fi
             
             if [ "${SERVICE}" = "pf-svc-income" ]; then
-              gcloud secrets add-iam-policy-binding PF_INCOME_API_KEY \
+              gcloud secrets add-iam-policy-binding PF_SVC_INCOME_API_KEY \
                 --member="serviceAccount:${SA}" \
                 --role="roles/secretmanager.secretAccessor" \
-                --quiet || echo "  Could not grant access to PF_INCOME_API_KEY"
-              gcloud secrets add-iam-policy-binding PF_REFERENCE_API_KEY \
+                --quiet || echo "  Could not grant access to PF_SVC_INCOME_API_KEY"
+              gcloud secrets add-iam-policy-binding PF_SVC_REFERENCE_API_KEY \
                 --member="serviceAccount:${SA}" \
                 --role="roles/secretmanager.secretAccessor" \
-                --quiet || echo "  Could not grant access to PF_REFERENCE_API_KEY"
+                --quiet || echo "  Could not grant access to PF_SVC_REFERENCE_API_KEY"
             fi
           done
 

@@ -165,7 +165,7 @@ Documentation-only, formatting-only, and mechanical refactor changes do not requ
 
 The reusable workflows retain explicit `pf-svc-income` branches only for the
 HIST-007 rollback window. `pf-svc-income` is the active service identity and
-uses `PF_INCOME_API_KEY`; the legacy `PF_INCOME_API_KEY` path must not be
+uses `PF_SVC_INCOME_API_KEY`; the legacy `PF_SVC_INCOME_API_KEY` path must not be
 used for new deployments. Remove those legacy branches after the rollback
 window is closed and its evidence is recorded.
 
