@@ -762,6 +762,7 @@ jobs:
       group: deploy-${{ inputs.repo_name }}-production
       cancel-in-progress: false
     runs-on: ubuntu-latest
+    environment: GCP
     needs: deploy
     # The deploy job is the only prerequisite; the explicit result check keeps
     # this job from being skipped when earlier PR-only jobs do not run on main.
