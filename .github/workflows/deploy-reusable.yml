@@ -755,6 +755,9 @@ jobs:
   # ----------------------------------------------------------------------------
   smoke-test:
     name: Verify deployed service health
+    permissions:
+      contents: read
+      id-token: write
     concurrency:
       group: deploy-${{ inputs.repo_name }}-production
       cancel-in-progress: false
@@ -769,6 +772,9 @@ jobs:
       needs.deploy.result == 'success'
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
       # The service is IAM-protected. Authenticate the smoke request with the
       # deployer identity instead of making the Cloud Run service public.
       - name: Authenticate smoke test to Google Cloud
