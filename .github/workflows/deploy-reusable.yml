@@ -406,9 +406,9 @@ jobs:
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
-            API_KEY_SECRET="PF_INCOME_API_KEY"
+            API_KEY_SECRET="PF_SVC_INCOME_API_KEY"
           elif [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
-            API_KEY_SECRET="PF_REFERENCE_API_KEY"
+            API_KEY_SECRET="PF_SVC_REFERENCE_API_KEY"
           else
             API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           fi
@@ -425,10 +425,10 @@ jobs:
             MISSING_SECRETS+=("${API_KEY_SECRET}")
           fi
           
-          # Services that call pf-svc-reference must have PF_REFERENCE_API_KEY.
+          # Services that call pf-svc-reference must have PF_SVC_REFERENCE_API_KEY.
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
-            if ! gcloud secrets describe PF_REFERENCE_API_KEY --quiet > /dev/null 2>&1; then
-              MISSING_SECRETS+=("PF_REFERENCE_API_KEY")
+            if ! gcloud secrets describe PF_SVC_REFERENCE_API_KEY --quiet > /dev/null 2>&1; then
+              MISSING_SECRETS+=("PF_SVC_REFERENCE_API_KEY")
             fi
           fi
           
@@ -438,8 +438,8 @@ jobs:
           # docs/google-drive-credentials-setup.md), ADC handles auth --
           # only the destination folder ID is still a secret.
           if [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
-            if ! gcloud secrets describe PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID --quiet > /dev/null 2>&1; then
-              MISSING_SECRETS+=("PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID")
+            if ! gcloud secrets describe PF_SVC_REFERENCE_GDRIVE_EXPORT_FOLDER_ID --quiet > /dev/null 2>&1; then
+              MISSING_SECRETS+=("PF_SVC_REFERENCE_GDRIVE_EXPORT_FOLDER_ID")
             fi
           fi
           
@@ -460,9 +460,9 @@ jobs:
               if [ "${SECRET}" = "${DATABASE_SECRET}" ]; then
                 echo "  echo '<postgresql-connection-string>' | \\\\"
                 echo "    gcloud secrets create ${DATABASE_SECRET} --data-file=- --replication-policy=automatic"
-              elif [ "${SECRET}" = "PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID" ]; then
+              elif [ "${SECRET}" = "PF_SVC_REFERENCE_GDRIVE_EXPORT_FOLDER_ID" ]; then
                 echo "  echo -n '<google-drive-folder-id>' | \\"
-                echo "    gcloud secrets create PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID --data-file=- --replication-policy=automatic"
+                echo "    gcloud secrets create PF_SVC_REFERENCE_GDRIVE_EXPORT_FOLDER_ID --data-file=- --replication-policy=automatic"
               else
                 echo "  echo -n \"\$(openssl rand -hex 32)\" | \\"
                 echo "    gcloud secrets create ${SECRET} --data-file=- --replication-policy=automatic"
@@ -520,7 +520,7 @@ jobs:
 
       # Deploy the new service revision.
       # Secret names follow convention: PF_<UPPERCASE_REPO_NAME>_API_KEY
-      # e.g., pf-svc-reference → PF_REFERENCE_API_KEY, pf-svc-income → PF_INCOME_API_KEY
+      # e.g., pf-svc-reference → PF_SVC_REFERENCE_API_KEY, pf-svc-income → PF_SVC_INCOME_API_KEY
       - name: Deploy to Cloud Run
         id: deploy
         run: |
@@ -543,22 +543,22 @@ jobs:
           SERVICE_NAME_ONLY="$(echo "${{ inputs.repo_name }}" | sed 's/^pf-//')"
           SERVICE_UPPER=$(echo "${SERVICE_NAME_ONLY}" | tr '[:lower:]-' '[:upper:]_')
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
-            API_KEY_SECRET="PF_INCOME_API_KEY"
+            API_KEY_SECRET="PF_SVC_INCOME_API_KEY"
           elif [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
-            API_KEY_SECRET="PF_REFERENCE_API_KEY"
+            API_KEY_SECRET="PF_SVC_REFERENCE_API_KEY"
           else
             API_KEY_SECRET="PF_${SERVICE_UPPER}_API_KEY"
           fi
           if [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
-            DATABASE_ENV="PF_REFERENCE_DATABASE_URL"
+            DATABASE_ENV="PF_SVC_REFERENCE_DATABASE_URL"
           else
             DATABASE_ENV="PF_DATABASE_URL"
           fi
           SECRETS_ARG="${DATABASE_ENV}=${{ inputs.database_secret_name }}:latest,${API_KEY_SECRET}=${API_KEY_SECRET}:latest"
 
-          # PF_REFERENCE_API_KEY for services calling pf-svc-reference.
+          # PF_SVC_REFERENCE_API_KEY for services calling pf-svc-reference.
           if [ "${{ inputs.repo_name }}" = "pf-svc-income" ]; then
-            SECRETS_ARG="${SECRETS_ARG},PF_REFERENCE_API_KEY=PF_REFERENCE_API_KEY:latest"
+            SECRETS_ARG="${SECRETS_ARG},PF_SVC_REFERENCE_API_KEY=PF_SVC_REFERENCE_API_KEY:latest"
           fi
 
           # Google Drive CSV export credentials for pf-svc-reference only (powers
@@ -566,10 +566,10 @@ jobs:
           # to a Service Account, only the destination folder ID is a
           # secret -- ADC handles authentication, no OAuth token needed.
           if [ "${{ inputs.repo_name }}" = "pf-svc-reference" ]; then
-            SECRETS_ARG="${SECRETS_ARG},PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID=PF_REFERENCE_GDRIVE_EXPORT_FOLDER_ID:latest"
+            SECRETS_ARG="${SECRETS_ARG},PF_SVC_REFERENCE_GDRIVE_EXPORT_FOLDER_ID=PF_SVC_REFERENCE_GDRIVE_EXPORT_FOLDER_ID:latest"
           fi
 
-          # Plain (non-secret) env vars. PF_REFERENCE_URL is a public Cloud Run
+          # Plain (non-secret) env vars. PF_SVC_REFERENCE_URL is a public Cloud Run
           # URL, not sensitive -- resolved dynamically here instead of
           # hardcoded, since Cloud Run URLs aren't derivable from the
           # project ID alone and this avoids a second manually-maintained
