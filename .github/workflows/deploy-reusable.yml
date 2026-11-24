@@ -772,19 +772,21 @@ jobs:
       needs.deploy.result == 'success'
 
     steps:
-      - name: Checkout repository
+      - name: Checkout pf-common for composite actions
         uses: actions/checkout@v7
-
-      # The service is IAM-protected. Authenticate the smoke request with the
-      # deployer identity instead of making the Cloud Run service public.
-      - name: Authenticate smoke test to Google Cloud
-        uses: google-github-actions/auth@v3
         with:
+          repository: mrturo-pf/pf-common
+          path: .pf-common
+
+      # The service is IAM-protected. Use the same authentication composite as
+      # the deploy job so WIF and the configured GCP_SA_KEY fallback behave
+      # identically; never make the Cloud Run service public for smoke tests.
+      - name: Authenticate smoke test to Google Cloud
+        uses: ./.pf-common/.github/actions/gcp-auth
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
           workload_identity_provider: ${{ inputs.workload_identity_provider }}
           service_account: ${{ inputs.deployer_service_account }}
-
-      - uses: google-github-actions/setup-gcloud@v3
-        with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Verify /health reports ok, the right service, and a fresh uptime
