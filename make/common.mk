@@ -8,7 +8,7 @@
 # USAGE:
 #   Include this file at the top of your service Makefile:
 #
-#     include ../pf-common/make/common.mk
+#     include ../pf-svc-common/make/common.mk
 #
 # REQUIRED VARIABLES (define BEFORE include):
 #   APP_PORT          - Port for uvicorn server (e.g., 8000, 8001)
@@ -36,7 +36,7 @@
 #   install-python    - Install Python 3.12 via pyenv
 #
 # DOCUMENTATION:
-#   See ../pf-common/make/README.md for detailed documentation.
+#   See ../pf-svc-common/make/README.md for detailed documentation.
 #
 # ============================================================================
 

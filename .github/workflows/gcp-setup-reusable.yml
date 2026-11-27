@@ -53,14 +53,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Checkout pf-common for composite actions
+      - name: Checkout pf-svc-common for composite actions
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
 
       - name: Authenticate to GCP
-        uses: ./.pf-common/.github/actions/gcp-auth
+        uses: ./.pf-svc-common/.github/actions/gcp-auth
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}

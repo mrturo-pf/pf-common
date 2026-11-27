@@ -1,12 +1,12 @@
-# pf-common - Shared Infrastructure for PF Ecosystem
+# pf-svc-common - Shared Infrastructure for PF Ecosystem
 
 This repository contains shared infrastructure, scripts, and configurations used across all PF microservices.
 
 ## Overview
 
-pf-common provides reusable Make targets, validation scripts, and templates for FastAPI microservices in the PF ecosystem.
+pf-svc-common provides reusable Make targets, validation scripts, and templates for FastAPI microservices in the PF ecosystem.
 
-**Services using pf-common:**
+**Services using pf-svc-common:**
 - [pf-svc-income](https://github.com/mrturo-pf/pf-svc-income) - Chilean payroll microservice
 - [pf-svc-reference](https://github.com/mrturo-pf/pf-svc-reference) - Financial reference data microservice
 - Future services...
@@ -17,7 +17,7 @@ pf-common provides reusable Make targets, validation scripts, and templates for 
 ## Directory Structure
 
 ```
-pf-common/
+pf-svc-common/
 ├── README.md                      # This file
 ├── make/
 │   ├── common.mk                  # Shared Make targets for FastAPI services
@@ -65,7 +65,7 @@ Shared utility scripts used across multiple repositories:
 python scripts/sync_deps.py
 
 # Sourced, not run directly, from a service's own scripts/local_stack.sh:
-source ../pf-common/scripts/local_stack_common.sh
+source ../pf-svc-common/scripts/local_stack_common.sh
 ```
 
 ### Future Additions
@@ -99,7 +99,7 @@ common/
 APP_PORT := 8002
 APP_MODULE := new_service.interfaces.api.main:app
 
-include ../pf-common/make/common.mk
+include ../pf-svc-common/make/common.mk
 
 .PHONY: env-write
 env-write:

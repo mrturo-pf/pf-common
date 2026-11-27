@@ -11,7 +11,7 @@
 #   3. Set APP_PORT to a free port (8000, 8001, 8002, ...)
 #   4. Set APP_MODULE to your FastAPI app module path
 #   5. Create scripts/write_env.sh (copy the pattern from pf-svc-income or
-#      pf-svc-reference: source ../../pf-common/scripts/write_env_common.sh, print
+#      pf-svc-reference: source ../../pf-svc-common/scripts/write_env_common.sh, print
 #      the service-specific lines, then call pf_corporate_tooling_env_block)
 #   6. Add custom targets if needed
 #
@@ -21,8 +21,8 @@
 APP_PORT := 8XXX  # <-- Choose a free port (check ARCHITECTURE.md)
 APP_MODULE := [service_name].interfaces.api.main:app  # <-- Adjust module path
 
-# Include shared targets from pf-common/
-include ../pf-common/make/common.mk
+# Include shared targets from pf-svc-common/
+include ../pf-svc-common/make/common.mk
 
 # ============================================================================
 # Service-specific variables (optional)
@@ -38,7 +38,7 @@ include ../pf-common/make/common.mk
 # Service-specific targets
 # ============================================================================
 
-# scripts/write_env.sh should source ../pf-common/scripts/write_env_common.sh
+# scripts/write_env.sh should source ../pf-svc-common/scripts/write_env_common.sh
 # and call pf_corporate_tooling_env_block at the end -- see pf-svc-income/pf-svc-reference
 # for the reference implementation. Its CORPORATIVE_* defaults are generic
 # placeholder URLs (no real hostname committed), so you only need to pass
@@ -72,6 +72,6 @@ local-up: ## Start full local stack (env, deps, API)
 # Example: Override clean to add custom cleanup
 # .PHONY: clean
 # clean:
-#     @$(MAKE) -f ../pf-common/make/common.mk clean  # Call common clean first
+#     @$(MAKE) -f ../pf-svc-common/make/common.mk clean  # Call common clean first
 #     rm -f my-custom-artifacts.pdf
 #     rm -rf my-custom-cache/

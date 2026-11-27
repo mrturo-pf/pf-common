@@ -12,7 +12,7 @@
 # "is container X running?", not manage containers themselves.
 #
 # Usage:
-#   source "../../pf-common/scripts/detect_container_cli.sh"
+#   source "../../pf-svc-common/scripts/detect_container_cli.sh"
 #   if ! container_is_running "$DB_CONTAINER"; then ...; fi
 
 _pf_container_cli_candidates() {

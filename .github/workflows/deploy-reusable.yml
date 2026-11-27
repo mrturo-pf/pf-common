@@ -25,7 +25,7 @@
 #
 # jobs:
 #   deploy:
-#     uses: mrturo-pf/pf-common/.github/workflows/deploy-reusable.yml@main
+#     uses: mrturo-pf/pf-svc-common/.github/workflows/deploy-reusable.yml@main
 #     with:
 #       repo_name: pf-svc-reference  # service repository name
 #     secrets: inherit  # REQUIRED - passes all GitHub secrets to the workflow
@@ -209,24 +209,24 @@ jobs:
         with:
           path: ${{ inputs.repo_name }}
 
-      # pf-common provides shared Makefile targets (lint, dead-code, etc.)
-      - name: Checkout pf-common
+      # pf-svc-common provides shared Makefile targets (lint, dead-code, etc.)
+      - name: Checkout pf-svc-common
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: pf-svc-common
           token: ${{ secrets.GH_PAT || github.token }}
 
-      # Checkout pf-common again for composite actions
-      - name: Checkout pf-common for composite actions
+      # Checkout pf-svc-common again for composite actions
+      - name: Checkout pf-svc-common for composite actions
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
           token: ${{ secrets.GH_PAT || github.token }}
 
       - name: Setup Python with dependencies
-        uses: ./.pf-common/.github/actions/setup-python-deps
+        uses: ./.pf-svc-common/.github/actions/setup-python-deps
         with:
           python-version: '3.14'
           cache-dependency-path: ${{ inputs.repo_name }}/pyproject.toml
@@ -270,7 +270,7 @@ jobs:
         run: make test-cov
 
       - name: Install Trivy
-        uses: ./.pf-common/.github/actions/install-trivy
+        uses: ./.pf-svc-common/.github/actions/install-trivy
 
       - name: Security scan (trivy fs)
         working-directory: ${{ inputs.repo_name }}
@@ -292,15 +292,15 @@ jobs:
         with:
           path: ${{ inputs.repo_name }}
 
-      - name: Checkout pf-common for composite actions
+      - name: Checkout pf-svc-common for composite actions
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
           token: ${{ secrets.GH_PAT || github.token }}
 
       - name: Build Docker image and export to tar
-        uses: ./.pf-common/.github/actions/docker-build-export
+        uses: ./.pf-svc-common/.github/actions/docker-build-export
         with:
           context: ./${{ inputs.repo_name }}
           image_name: ${{ inputs.repo_name }}:scan
@@ -330,10 +330,10 @@ jobs:
           esac
 
       - name: Install Trivy
-        uses: ./.pf-common/.github/actions/install-trivy
+        uses: ./.pf-svc-common/.github/actions/install-trivy
 
       - name: Trivy container scan with SARIF upload and gate
-        uses: ./.pf-common/.github/actions/trivy-sarif-scan
+        uses: ./.pf-svc-common/.github/actions/trivy-sarif-scan
         with:
           image_tar: /tmp/${{ inputs.repo_name }}-scan.tar
           sarif_file: trivy-results.sarif
@@ -382,11 +382,11 @@ jobs:
       revision_name: ${{ steps.deploy.outputs.revision_name }}
 
     steps:
-      - name: Checkout pf-common for composite actions
+      - name: Checkout pf-svc-common for composite actions
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
 
       - name: Download release image artifact
         uses: actions/download-artifact@v8
@@ -395,7 +395,7 @@ jobs:
           path: /tmp
 
       - name: Authenticate to GCP
-        uses: ./.pf-common/.github/actions/gcp-auth
+        uses: ./.pf-svc-common/.github/actions/gcp-auth
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           workload_identity_provider: ${{ inputs.workload_identity_provider }}
@@ -783,19 +783,19 @@ jobs:
       needs.deploy.result == 'success'
 
     steps:
-      - name: Checkout pf-common for composite actions
+      - name: Checkout pf-svc-common for composite actions
         if: inputs.smoke_requires_auth
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
 
       # The service is IAM-protected. Use the same authentication composite as
       # the deploy job so WIF and the configured GCP_SA_KEY fallback behave
       # identically; never make the Cloud Run service public for smoke tests.
       - name: Authenticate smoke test to Google Cloud
         if: inputs.smoke_requires_auth
-        uses: ./.pf-common/.github/actions/gcp-auth
+        uses: ./.pf-svc-common/.github/actions/gcp-auth
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
           workload_identity_provider: ${{ inputs.workload_identity_provider }}
@@ -883,14 +883,14 @@ jobs:
        needs.smoke-test.result == 'failure')
 
     steps:
-      - name: Checkout pf-common for composite actions
+      - name: Checkout pf-svc-common for composite actions
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
 
       - name: Send failure email
-        uses: ./.pf-common/.github/actions/send-email
+        uses: ./.pf-svc-common/.github/actions/send-email
         with:
           mail_server: ${{ secrets.MAIL_SERVER }}
           mail_port: ${{ secrets.MAIL_PORT }}
@@ -929,14 +929,14 @@ jobs:
       needs.smoke-test.result == 'success'
 
     steps:
-      - name: Checkout pf-common for composite actions
+      - name: Checkout pf-svc-common for composite actions
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: .pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: .pf-svc-common
 
       - name: Send success email
-        uses: ./.pf-common/.github/actions/send-email
+        uses: ./.pf-svc-common/.github/actions/send-email
         with:
           mail_server: ${{ secrets.MAIL_SERVER }}
           mail_port: ${{ secrets.MAIL_PORT }}
