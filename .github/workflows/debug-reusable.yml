@@ -60,7 +60,7 @@ jobs:
           ls -la ${{ inputs.repo_name }}/
           echo ""
           echo "========================================="
-          echo "PF-COMMON CONTENT"
+          echo "PF-SVC-COMMON CONTENT"
           echo "========================================="
           ls -la pf-svc-common/
           echo ""
