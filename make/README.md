@@ -12,7 +12,7 @@ APP_PORT := 8002
 APP_MODULE := my_service.interfaces.api.main:app
 
 # Include shared targets
-include ../pf-common/make/common.mk
+include ../pf-svc-common/make/common.mk
 
 # Service-specific targets
 .PHONY: env-write
@@ -31,7 +31,7 @@ local-up:
 
 ## Required Variables
 
-Define these BEFORE `include ../pf-common/make/common.mk`:
+Define these BEFORE `include ../pf-svc-common/make/common.mk`:
 
 | Variable | Description | Example |
 |---|---|---|
@@ -86,11 +86,11 @@ Override these AFTER include if needed:
 Redefine the target AFTER the include:
 
 ```makefile
-include ../pf-common/make/common.mk
+include ../pf-svc-common/make/common.mk
 
 # Override clean to add service-specific cleanup
 clean:
-    @$(MAKE) -f ../pf-common/make/common.mk clean  # Call original
+    @$(MAKE) -f ../pf-svc-common/make/common.mk clean  # Call original
     rm -f my-custom-files.pdf
 ```
 
@@ -99,7 +99,7 @@ clean:
 Simply define new targets below the include:
 
 ```makefile
-include ../pf-common/make/common.mk
+include ../pf-svc-common/make/common.mk
 
 .PHONY: import-data
 import-data:

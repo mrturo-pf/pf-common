@@ -5,7 +5,7 @@ This script ensures that critical shared dependencies (FastAPI, SQLAlchemy, pyte
 are at the same minimum version across all FastAPI microservices in the PF ecosystem.
 
 Usage:
-    python pf-common/scripts/sync_deps.py
+    python pf-svc-common/scripts/sync_deps.py
 
 Exit codes:
     0 - All core dependencies are synchronized

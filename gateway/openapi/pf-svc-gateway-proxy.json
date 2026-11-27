@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "PF backend gateway proxy route map",
-    "description": "Explicit routes through the scale-to-zero pf-gateway-proxy.",
+    "description": "Explicit routes through the scale-to-zero pf-svc-gateway-proxy.",
     "version": "0.2.0"
   },
   "securityDefinitions": {

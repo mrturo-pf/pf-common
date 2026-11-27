@@ -9,7 +9,7 @@
 #
 # Usage:
 #   SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-#   source "$SCRIPT_DIR/../../pf-common/scripts/local_stack_common.sh"
+#   source "$SCRIPT_DIR/../../pf-svc-common/scripts/local_stack_common.sh"
 #   pf_require_db_container "$DB_CONTAINER"
 #   pf_ensure_venv "$VENV" "import rates, fastapi, uvicorn"
 #   pf_print_startup_banner "$APP_PORT" "$ENV_FILE"

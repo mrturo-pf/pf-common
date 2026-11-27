@@ -19,12 +19,12 @@ jobs:
         with:
           path: ${{ inputs.repo_name }}
 
-      # Checkout pf-common
-      - name: Checkout pf-common
+      # Checkout pf-svc-common
+      - name: Checkout pf-svc-common
         uses: actions/checkout@v7
         with:
-          repository: mrturo-pf/pf-common
-          path: pf-common
+          repository: mrturo-pf/pf-svc-common
+          path: pf-svc-common
 
       # Checkout pf-db (always - provides SQL schema for integration tests)
       - name: Checkout pf-db
@@ -62,7 +62,7 @@ jobs:
           echo "========================================="
           echo "PF-COMMON CONTENT"
           echo "========================================="
-          ls -la pf-common/
+          ls -la pf-svc-common/
           echo ""
           echo "========================================="
           echo "PF-DB CONTENT"

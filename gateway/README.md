@@ -9,7 +9,7 @@ concept described by IMP-016.
 https://pf-backend-gateway-poc-88uq0qjn.uc.gateway.dev
 ```
 
-The facade routes `/reference/*` and `/income/*` through `pf-gateway-proxy` to the
+The facade routes `/reference/*` and `/income/*` through `pf-svc-gateway-proxy` to the
 corresponding Cloud Run service. Direct Cloud Run URLs remain rollback paths.
 
 ## Current proof of concept
@@ -26,7 +26,7 @@ GET /income/payroll
 The approved migration config uses the generated `gateway.dev` hostname and keeps the
 health operations keyless. Business operations use native Google API Gateway API-key
 security with the `X-Gateway-API-Key` header. API Gateway forwards original headers, so
-`pf-gateway-proxy` removes that gateway-owned header before backend forwarding;
+`pf-svc-gateway-proxy` removes that gateway-owned header before backend forwarding;
 application `X-API-Key` remains a temporary compatibility header until backend services
 stop requiring it. Direct Cloud Run URLs remain IAM-protected rollback paths.
 

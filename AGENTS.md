@@ -1,4 +1,4 @@
-# AGENTS.md — pf-common
+# AGENTS.md — pf-svc-common
 
 Shared infrastructure for the PF ecosystem: reusable Make targets, shell helpers,
 validation scripts, and templates consumed by PF services. This repository is not a
@@ -7,13 +7,13 @@ deployable service and has no HTTP API or database ownership.
 ## Scope
 
 This file governs implementation, testing, documentation, and operations inside
-`pf-common`. Ecosystem ownership boundaries and cross-repository coordination are
+`pf-svc-common`. Ecosystem ownership boundaries and cross-repository coordination are
 defined in the root [`AGENTS.md`](../../AGENTS.md). This file owns the shared-tooling
 details.
 
 ## Repository responsibilities
 
-`pf-common` owns reusable infrastructure that is intentionally consumed by more than
+`pf-svc-common` owns reusable infrastructure that is intentionally consumed by more than
 one repository:
 
 - `make/common.mk` and service Makefile templates;
@@ -31,8 +31,8 @@ service-specific business logic belongs in the consuming service repository.
   service's application module, database schema, or deployment URL.
 - Shared scripts validate inputs and fail clearly; never hide errors with silent
   fallbacks or broad exception suppression.
-- Keep dependency direction one-way: consuming services may use `pf-common`, but
-  `pf-common` must not import application code or private configuration from them.
+- Keep dependency direction one-way: consuming services may use `pf-svc-common`, but
+  `pf-svc-common` must not import application code or private configuration from them.
 - Prefer the smallest reusable abstraction that solves a demonstrated cross-service
   need. Do not add shared machinery for a single caller.
 
@@ -97,7 +97,7 @@ When a shared change affects a consumer, run that consumer's documented `make ch
 
 ## Gateway entry-point policy
 
-The GCP API Gateway plus `pf-gateway-proxy` is the only approved production entry point
+The GCP API Gateway plus `pf-svc-gateway-proxy` is the only approved production entry point
 for `pf-svc-*` traffic. Shared deployment/configuration changes must not publish direct
 Cloud Run URLs as consumer endpoints. Direct URLs are rollback/diagnostic paths only,
 and backend-to-backend integrations must migrate to the gateway facade before final

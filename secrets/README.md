@@ -1,13 +1,13 @@
-# secrets/ (pf-common, local-only)
+# secrets/ (pf-svc-common, local-only)
 
-Module-scoped, machine-local secrets for `pf-common`. Everything placed in
+Module-scoped, machine-local secrets for `pf-svc-common`. Everything placed in
 this folder — including new subfolders — is gitignored by default (see
 `.gitignore` right here): only this `README.md` and the `.gitignore` itself
 can ever be committed.
 
 ## Currently unused, and that's fine
 
-`pf-common` is shared build/Make infrastructure (`make/`, `scripts/`) with
+`pf-svc-common` is shared build/Make infrastructure (`make/`, `scripts/`) with
 no application code and no credentials of its own — every value it touches
 (`PF_DATABASE_URL`, `[SERVICE]_API_KEY`, etc.) is passed in by the *calling*
 service's own Makefile/environment, not stored here.
